@@ -1,0 +1,808 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ////////////////////////// */
+
+.background {
+  background-color: #000000;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.split-container {
+  display: flex;
+  width: 80%;
+  height: 70vh;
+  background: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.welcome-side {
+  flex: 1;
+  background: #000000;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+}
+
+.welcome-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.welcome-text:first-child {
+  font-size: 3rem;
+  font-weight: 400;
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.welcome-text:last-child {
+  background: linear-gradient(to right, #fff, #e0e0e0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+               0 0 40px rgba(255, 255, 255, 0.3),
+               0 0 60px rgba(255, 255, 255, 0.2);
+}
+
+.welcome-subtext {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.login-side {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background: #ffffff;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Login Styles */
+.text {
+  color: #000000;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.input {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 35px;
+}
+
+.input input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: #000000;
+  outline: none;
+  padding: 0 15px;
+}
+
+.input:focus-within {
+  border-color: #e0e0e0;
+  box-shadow: none;
+}
+
+.input input::placeholder {
+  color: #757575;
+  font-size: 15px;
+}
+
+.submit {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.submit:hover {
+  background: #333333;
+  transform: translateY(-2px);
+}
+
+/* Home Styles */
+.management-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 15px;
+  width: 220px;
+  height: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  margin-top: 0;
+  z-index: 1;
+  border: 1px solid #e0e0e0;
+}
+
+.management-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.box-title {
+  color: #000000;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.add-button {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-button:hover {
+  background: #333333;
+}
+
+.item-card {
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.item-card:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.item-card h3 {
+  color: #000000;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.item-card p {
+  color: #666666;
+  font-size: 12px;
+  margin: 3px 0;
+}
+
+.item-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.edit-button, .delete-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-button {
+  background: #000000;
+  color: #ffffff;
+}
+
+.delete-button {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.edit-button:hover {
+  background: #333333;
+}
+
+.delete-button:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+.logout-button {
+  position: absolute;
+  top: 15px;
+  right: 50px;
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 1000;
+}
+
+.logout-button:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+/* Modal Styles */
+.modal {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999 !important;
+}
+
+.modal-dialog {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  width: 90%;
+  max-width: 350px;
+  z-index: 10000 !important;
+}
+
+.modal-content {
+  border-radius: 12px;
+  border: none;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 100%;
+}
+
+.modal-header {
+  background: #000000;
+  color: #ffffff;
+  border-radius: 12px 12px 0 0;
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Modal Form Styles */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-control {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  width: 90%;
+  margin: 0 auto 8px auto;
+  font-size: 13px;
+  height: 32px;
+}
+
+.form-control:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.form-label {
+  color: #000000;
+  font-weight: 500;
+  font-size: 13px;
+  margin-bottom: 4px;
+  display: block;
+  text-align: left;
+  margin-left: 5%;
+}
+
+/* Modal Button Styles */
+.modal-footer .btn {
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal-footer .btn-secondary {
+    background: transparent;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #f5f5f5;
+    transform: translateY(-1px);
+}
+
+.modal-footer .btn-primary {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+}
+
+.modal-footer .btn-primary:hover {
+    background: #333333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Add styles for main container */
+.main-container {
+    background: #ffffff;
+    border-radius: 15px 15px 0 0;
+    padding: 30px;
+    margin: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    width: 100%;
+    height: 450px;
+    position: relative;
+    bottom: 0;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    z-index: 0;
+}
+
+.logo {
+    position: absolute;
+    top: -9px;
+    left: 40px;
+    height: 90px;
+    z-index: 1000;
+}
+
+/* Announcement card specific styles */
+.announcement-card {
+    padding: 12px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.details-button {
+    background: transparent;
+    color: #000000;
+    border: 1px solid #000000;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.details-button:hover {
+    background: #000000;
+    color: #ffffff;
+}
+
+/* Announcement details styles */
+.announcement-details {
+    padding: 10px;
+}
+
+.announcement-details h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.announcement-details .date {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.announcement-details .description {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
+}
+
+/* Style for textarea in modal */
+.form-control[as="textarea"] {
+    height: auto;
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* File attachment styles */
+.file-attachment {
+    margin-top: 10px;
+    padding: 8px;
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+
+.download-link {
+    color: #000;
+    text-decoration: none;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.download-link:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+/* Style for file input */
+.form-control[type="file"] {
+    padding: 8px;
+    font-size: 13px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+/* Announcement Details Modal Styles */
+.announcement-details {
+    padding: 10px;
+}
+
+.announcement-details h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.announcement-details .date {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.description-box {
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.description-box label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #000;
+    font-size: 14px;
+}
+
+.description-box p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+}
+
+.file-attachment {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.download-link {
+    color: #000;
+    text-decoration: none;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.download-link:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+.details-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.details-actions .edit-button,
+.details-actions .delete-button {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+/* Details content styles */
+.details-content {
+    padding: 10px;
+}
+
+.details-content h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+.details-field {
+    background: #f8f8f8;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.details-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #000;
+    font-size: 14px;
+}
+
+.details-field p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Style for disabled button */
+.modal-footer .btn-primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+
+/* Login button styles */
+.submit:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+
+/* Add focus styles */
+.input:focus-within {
+    border-color: #000000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Items List Styles */
+.items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.items-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.items-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.items-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.items-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Item Card Styles */
+.item-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #000;
+    flex: 1;
+}
+
+/* Details Button Styles */
+.details-button {
+    background: transparent;
+    color: #000;
+    border: 1.5px solid #000;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
+.details-button:hover {
+    background: #000;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.details-button:active {
+    transform: translateY(0);
+}
+
+
+
+
+
+
+ 
