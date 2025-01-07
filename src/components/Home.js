@@ -3,7 +3,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import "../App.css";
 import logo from "../assets/logo.png";
-
+//2
 function Home() {
     const navigate = useNavigate();
     const [tutors, setTutors] = useState([]);
