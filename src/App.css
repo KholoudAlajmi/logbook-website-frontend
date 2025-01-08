@@ -82,7 +82,8 @@
   font-weight: 700;
   margin: 0;
   text-align: center;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
+
 }
 
 .welcome-text:first-child {
@@ -798,6 +799,26 @@
 
 .details-button:active {
     transform: translateY(0);
+}
+
+/* Add error message styling */
+.error-message {
+    color: #ff0000;
+    font-size: 12px;
+  
+    margin-bottom: 10px;
+    padding: 4px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Update input styles for error state */
+.input.error {
+    border-color: #ff0000;
+}
+
+.input.error input::placeholder {
+    color: #ff0000;
 }
 
 
