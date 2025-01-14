@@ -2,30 +2,35 @@ import React, { useState } from "react";
 import "../App.css";
 import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import adminData from "../data/AdminData"; // Import admin data
+import api from "../api/axios";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({
-    name: "",
+    username: "",
     password: "",
   });
   const [error, setError] = useState(""); // Add error state
 
   const navigate = useNavigate();
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    
-    // Check if credentials match admin data
-    const admin = adminData.find(
-      admin => admin.name === userInfo.name && admin.password === userInfo.password
-    );
+    try {
+      const response = await api.post('/users/login', {
+        username: userInfo.username,
+        password: userInfo.password
+      });
 
-    if (admin) {
+      // Store token
+      localStorage.setItem('token', response.data.token);
+      console.log('Token stored:', response.data.token); // Debug log
+
+      // Navigate to home page
       navigate("/home");
-    } else {
-      setError("Incorrect username or password");
-      setUserInfo({ name: "", password: "" }); // Clear inputs on error
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.response?.data?.message || "Login failed");
+      setUserInfo({ username: "", password: "" });
     }
   };
 
@@ -40,17 +45,17 @@ const Login = () => {
         <div className="login-side">
           <div className="login-box">
             <div className="text">Login</div>
-            {error && <div className="error-message">{error}</div>} {/* Add error message display */}
+            {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleFormSubmit}>
               <div className="input">
                 <input
                   type="text"
-                  name="name"
+                  name="username"
                   placeholder="Username"
                   required
-                  value={userInfo.name}
+                  value={userInfo.username}
                   onChange={(e) => {
-                    setUserInfo({...userInfo, name: e.target.value});
+                    setUserInfo({...userInfo, username: e.target.value});
                     setError(""); // Clear error when typing
                   }}
                 />
@@ -71,7 +76,7 @@ const Login = () => {
               <button 
                 type="submit"
                 className="submit"
-                disabled={!userInfo.name || !userInfo.password}
+                disabled={!userInfo.username || !userInfo.password}
               >
                 Sign in
               </button>
