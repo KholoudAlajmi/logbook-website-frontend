@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "*",
     element: <Login />,
   },
   {

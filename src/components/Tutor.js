@@ -3,6 +3,7 @@ import { Modal, Form, Button } from 'react-bootstrap';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
 
+//user.role.indexOf('tutor') > -1
 const Tutor = () => {
     const queryClient = useQueryClient();
     const [showModal, setShowModal] = useState({ type: '', action: '', show: false });
@@ -15,10 +16,10 @@ const Tutor = () => {
         queryKey: ['users'],
         queryFn: async () => {
             const response = await api.get('/users');
-            return response.data.filter(user => user.role === 'tutor');
+            return response.data.filter(user => user.roles.includes('tutor') );
         }
     });
-
+console.log("tutors", tutors)
     // Filter tutors
     const filterTutors = (tutors) => {
         if (!tutorSearch) return tutors;

@@ -17,7 +17,7 @@ const Resident = () => {
             try {
                 const response = await api.get('/users');
                 // Only return residents
-                const residentUsers = response.data.filter(user => user.role === 'resident');
+                const residentUsers = response.data.filter(user => user.roles.includes('resident'));
                 return residentUsers;
             } catch (error) {
                 console.error('Error fetching residents:', error);

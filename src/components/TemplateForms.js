@@ -30,9 +30,12 @@ const TemplateForms = () => {
     const filterForms = (forms) => {
         if (!formSearch) return forms;
         return forms?.filter(form => 
-            form.name.toLowerCase().includes(formSearch.toLowerCase())
+            form.formName.toLowerCase().includes(formSearch.toLowerCase())
         );
     };
+
+
+    const scaleDescription = "The purpose of this scale is to evaluate\nthe trainee's ability to perform this\nprocedure safely and independently.\nWith that in mind please use the\nscale below to evaluate each item,\nirrespective of the resident's level of\ntraining in regards to this case.\nScale:\n1 - \"I had to do\" - Requires complete hands on guidance, did not do, or was not given the opportunity to do\n2 - \"I had to talk them through\" - Able to perform tasks but requires constant direction\n3 - \"I had to prompt them from time to time\" - Demonstrates some independence, but requires intermittent direction\n4 - \"I needed to be in the room just in case\" - Independence but unaware of risks and still requires supervision for safe practice\n5 - \"I did not need to be there\" - Complete independence, understands risks and performs safely, practice ready"  
 
     // Add this mutation
     const addFormMutation = useMutation({
@@ -42,15 +45,16 @@ const TemplateForms = () => {
         },
         onSuccess: () => {
             alert('Form added successfully!');
-            // Close modal first
             setShowModal({ type: '', action: '', show: false });
-            // Then reset form and refresh data
             setSelectedItem(null);
             queryClient.invalidateQueries(['forms']);
         },
         onError: (error) => {
-            console.error('Add error:', error);
-            alert(error.response?.data?.message || 'Failed to add form');
+            if (error.response?.data?.error === 'DUPLICATE_FORM_NAME') {
+                alert('This form name already exists. Please choose a different name.');
+            } else {
+                alert('Failed to add form: ' + (error.response?.data?.message || error.message));
+            }
         }
     });
 
@@ -97,6 +101,31 @@ const TemplateForms = () => {
         onError: (error) => {
             console.error('Update error:', error);
             alert(error.response?.data?.message || 'Failed to update form');
+        }
+    });
+
+    // Add deleteFieldMutation
+    const deleteFieldMutation = useMutation({
+        mutationFn: async (fieldId) => {
+            if (!fieldId) {
+                throw new Error('No field ID provided');
+            }
+            console.log('Deleting field:', fieldId); // Debug log
+            try {
+                const response = await api.delete(`/fieldTemplate/${fieldId}`);
+                return response.data;
+            } catch (error) {
+                console.error('Delete request error:', error);
+                throw error;
+            }
+        },
+        onSuccess: (data) => {
+            console.log('Field deleted successfully:', data); // Debug log
+            queryClient.invalidateQueries(['forms']);
+        },
+        onError: (error) => {
+            console.error('Delete field error:', error);
+            alert('Failed to delete field: ' + (error.response?.data?.message || error.message));
         }
     });
 
@@ -150,7 +179,7 @@ const TemplateForms = () => {
                 ) : (
                     filterForms(forms || []).map((form) => (
                         <div key={form._id} className="item">
-                            <span>{form.name}</span>
+                            <span>{form.formName}</span>
                             <button 
                                 className="details-button"
                                 onClick={() => {
@@ -185,16 +214,18 @@ const TemplateForms = () => {
                         <Form className="details-content">
                             <Form.Group className="details-field">
                                 <Form.Label>Form Name</Form.Label>
-                                <p>{selectedItem.name}</p>
+                                <p>{selectedItem.formName}</p>
                             </Form.Group>
 
-                            {/* Add Scale Description if form is SCORE */}
-                            {selectedItem.name === 'SCORE' && selectedItem.scaleDescription && (
-                                <Form.Group className="details-field">
-                                    <Form.Label>Scale Description</Form.Label>
-                                    <p>{selectedItem.scaleDescription}</p>
-                                </Form.Group>
-                            )}
+                            <Form.Group className="details-field">
+                                <Form.Label>Score</Form.Label>
+                                <p>{selectedItem.score || 'Not specified'}</p>
+                            </Form.Group>
+
+                            <Form.Group className="details-field">
+                                <Form.Label>Scale Description</Form.Label>
+                                <p>{selectedItem.scaleDescription || 'Not specified'}</p>
+                            </Form.Group>
 
                             <Form.Group className="details-field">
                                 <Form.Label>Fields</Form.Label>
@@ -203,20 +234,16 @@ const TemplateForms = () => {
                                         <div key={field._id || index} className="field-item">
                                             <h3>Field {index + 1}</h3>
                                             <p><strong>Name:</strong> {field.name}</p>
-                                            
-                                            {/* Move Details right after Name */}
-                                            {field.hasDetails && (
-                                                <p><strong>Details:</strong> {field.details}</p>
-                                            )}
-                                            
+                                            <p><strong>Details:</strong> {field.details || 'Not specified'}</p>
                                             <p><strong>Type:</strong> {field.type}</p>
                                             <p><strong>Position:</strong> {field.position || 'Not specified'}</p>
                                             <p><strong>Response:</strong> {field.response || 'Not specified'}</p>
                                             <p><strong>Section:</strong> {field.section || 'Not specified'}</p>
                                             
-                                            {field.type === 'select' && field.options && field.options.length > 0 && (
+                                            {/* Show options for both select and checkbox types */}
+                                            {(field.type === 'select' || field.type === 'checkbox') && field.options && field.options.length > 0 && (
                                                 <>
-                                                    <p><strong>Select Options:</strong></p>
+                                                    <p><strong>{field.type === 'select' ? 'Select Options:' : 'Checkbox Options:'}</strong></p>
                                                     <ul>
                                                         {field.options.map((option, i) => (
                                                             <li key={i}>{option}</li>
@@ -224,6 +251,8 @@ const TemplateForms = () => {
                                                     </ul>
                                                 </>
                                             )}
+
+                                            {/* Show scale options if type is scale */}
                                             {field.type === 'scale' && field.scaleOptions && field.scaleOptions.length > 0 && (
                                                 <>
                                                     <p><strong>Scale Options:</strong></p>
@@ -289,34 +318,61 @@ const TemplateForms = () => {
                             <Form.Control
                                 type="text"
                                 placeholder="Enter form name"
-                                value={selectedItem?.name || ''}
+                                value={selectedItem?.formName || ''}
                                 onChange={(e) => setSelectedItem(prev => ({
                                     ...prev,
-                                    name: e.target.value,
+                                    formName: e.target.value,
                                     fieldTemplates: prev?.fieldTemplates || []
                                 }))}
                             />
                         </Form.Group>
 
-                        {/* Add Scale Description if form name is SCORE */}
-                        {selectedItem?.name === 'SCORE' && (
-                            <Form.Group className="mb-3">
-                                <Form.Label>
-                                    Scale Description <span className="text-danger">*</span>
-                                </Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    rows={3}
-                                    placeholder="Enter scale description"
-                                    value={selectedItem?.scaleDescription || ''}
-                                    onChange={(e) => setSelectedItem(prev => ({
+                        {/* Add Score field */}
+                        <Form.Group className="mb-3">
+                            <Form.Label>Score</Form.Label>
+                            <Form.Select
+                                value={selectedItem?.score || ''}
+                                onChange={(e) => {
+                                    setSelectedItem(prev => ({
                                         ...prev,
-                                        scaleDescription: e.target.value
-                                    }))}
-                                    required
-                                />
-                            </Form.Group>
-                        )}
+                                        score: e.target.value,
+                                        scaleDescription: e.target.value === 'OTHER' ? '' : prev.scaleDescription // Reset description for OTHER
+                                    }));
+                                }}
+                            >
+                                <option value="">Select Score</option>
+                                <option value="SCORE">SCORE</option>
+                                <option value="OTHER">OTHER</option>
+                            </Form.Select>
+
+                            {/* Show appropriate textarea based on score type */}
+                            {selectedItem?.score === 'SCORE' ? (
+                                <Form.Group className="mb-3 mt-2">
+                                    <Form.Label>Scale Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        placeholder="Enter scale description"
+                                        value={scaleDescription}
+                                        disabled
+                                    />
+                                </Form.Group>
+                            ) : selectedItem?.score === 'OTHER' && (
+                                <Form.Group className="mb-3 mt-2">
+                                    <Form.Label>Custom Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        placeholder="Enter your custom description..."
+                                        value={selectedItem.scaleDescription || ''}
+                                        onChange={(e) => setSelectedItem(prev => ({
+                                            ...prev,
+                                            scaleDescription: e.target.value
+                                        }))}
+                                    />
+                                </Form.Group>
+                            )}
+                        </Form.Group>
 
                         <Form.Group className="mb-3">
                             <Form.Label>Fields</Form.Label>
@@ -329,13 +385,30 @@ const TemplateForms = () => {
                                                 variant="danger" 
                                                 size="sm"
                                                 className="remove-field-btn"
-                                                onClick={() => {
-                                                    const newFields = [...selectedItem.fieldTemplates];
-                                                    newFields.splice(index, 1);
-                                                    setSelectedItem(prev => ({
-                                                        ...prev,
-                                                        fieldTemplates: newFields
-                                                    }));
+                                                onClick={async () => {
+                                                    try {
+                                                        if (field._id) {
+                                                            // If field exists in database, delete it
+                                                            await deleteFieldMutation.mutateAsync(field._id);
+                                                            // Only update local state after successful deletion
+                                                            const newFields = [...selectedItem.fieldTemplates];
+                                                            newFields.splice(index, 1);
+                                                            setSelectedItem(prev => ({
+                                                                ...prev,
+                                                                fieldTemplates: newFields
+                                                            }));
+                                                        } else {
+                                                            // If field doesn't exist in DB, just update local state
+                                                            const newFields = [...selectedItem.fieldTemplates];
+                                                            newFields.splice(index, 1);
+                                                            setSelectedItem(prev => ({
+                                                                ...prev,
+                                                                fieldTemplates: newFields
+                                                            }));
+                                                        }
+                                                    } catch (error) {
+                                                        console.error('Failed to delete field:', error);
+                                                    }
                                                 }}
                                             >
                                                 Remove
@@ -424,7 +497,7 @@ const TemplateForms = () => {
                                                         newFields[index] = {
                                                             ...newFields[index],
                                                             type: e.target.value,
-                                                            options: e.target.value === 'select' ? [] : undefined,
+                                                            options: e.target.value === 'select' || e.target.value === 'checkbox' ? [] : undefined,
                                                             scaleOptions: e.target.value === 'scale' ? [] : undefined
                                                         };
                                                         setSelectedItem(prev => ({
@@ -439,6 +512,7 @@ const TemplateForms = () => {
                                                     <option value="date">Date</option>
                                                     <option value="select">Select</option>
                                                     <option value="scale">Scale</option>
+                                                    <option value="checkbox">Checkbox</option>
                                                 </Form.Select>
                                             </Form.Group>
 
@@ -515,10 +589,14 @@ const TemplateForms = () => {
                                             </Form.Group>
 
                                             {/* Options sections - Full width when visible */}
-                                            {(field.type === 'select' || field.type === 'scale') && (
+                                            {(field.type === 'select' || field.type === 'scale' || field.type === 'checkbox') && (
                                                 <div className="field-full-width">
                                                     <Form.Group className="mb-2">
-                                                        <Form.Label>{field.type === 'select' ? 'Options' : 'Scale Options'}</Form.Label>
+                                                        <Form.Label>
+                                                            {field.type === 'select' ? 'Options' : 
+                                                             field.type === 'scale' ? 'Scale Options' :
+                                                             'Checkbox Options'}
+                                                        </Form.Label>
                                                         <div className="options-list">
                                                             {field.type === 'select' && (
                                                                 field.options?.map((option, optionIndex) => (
@@ -568,13 +646,32 @@ const TemplateForms = () => {
                                                                                 }));
                                                                             }}
                                                                             placeholder={`Scale Option ${optionIndex + 1}`}
+                                                                        />   
+                                                                    </div>
+                                                                ))
+                                                            )}
+                                                            {field.type === 'checkbox' && (
+                                                                field.options?.map((option, optionIndex) => (
+                                                                    <div key={optionIndex} className="option-item">
+                                                                        <Form.Control
+                                                                            type="text"
+                                                                            value={option}
+                                                                            onChange={(e) => {
+                                                                                const newFields = [...selectedItem.fieldTemplates];
+                                                                                newFields[index].options[optionIndex] = e.target.value;
+                                                                                setSelectedItem(prev => ({
+                                                                                    ...prev,
+                                                                                    fieldTemplates: newFields
+                                                                                }));
+                                                                            }}
+                                                                            placeholder={`Checkbox Option ${optionIndex + 1}`}
                                                                         />
                                                                         <Button 
                                                                             variant="danger"
                                                                             size="sm"
                                                                             onClick={() => {
                                                                                 const newFields = [...selectedItem.fieldTemplates];
-                                                                                newFields[index].scaleOptions.splice(optionIndex, 1);
+                                                                                newFields[index].options.splice(optionIndex, 1);
                                                                                 setSelectedItem(prev => ({
                                                                                     ...prev,
                                                                                     fieldTemplates: newFields
@@ -591,7 +688,7 @@ const TemplateForms = () => {
                                                                 size="sm"
                                                                 onClick={() => {
                                                                     const newFields = [...selectedItem.fieldTemplates];
-                                                                    if (field.type === 'select') {
+                                                                    if (field.type === 'select' || field.type === 'checkbox') {
                                                                         newFields[index].options = [...(newFields[index].options || []), ''];
                                                                     } else if (field.type === 'scale') {
                                                                         newFields[index].scaleOptions = [...(newFields[index].scaleOptions || []), ''];
@@ -602,7 +699,9 @@ const TemplateForms = () => {
                                                                     }));
                                                                 }}
                                                             >
-                                                                + Add {field.type === 'select' ? 'Option' : 'Scale Option'}
+                                                                + Add {field.type === 'select' ? 'Option' : 
+                                                                      field.type === 'scale' ? 'Scale Option' :
+                                                                      'Checkbox Option'}
                                                             </Button>
                                                         </div>
                                                     </Form.Group>
@@ -650,7 +749,7 @@ const TemplateForms = () => {
                     <Button 
                         variant="primary"
                         onClick={async () => {
-                            if (!selectedItem?.name) {
+                            if (!selectedItem?.formName) {
                                 alert('Form name is required');
                                 return;
                             }
@@ -659,16 +758,16 @@ const TemplateForms = () => {
                                 return;
                             }
 
-                            // Add validation for SCORE form
-                            if (selectedItem.name === 'SCORE' && !selectedItem.scaleDescription) {
-                                alert('Scale description is required for SCORE form');
-                                return;
-                            }
+                            // Filter out empty/invalid fields
+                            const validFields = selectedItem.fieldTemplates.filter(field => 
+                                field.name && field.type // Only include fields that have at least name and type
+                            );
 
                             const formData = {
-                                name: selectedItem.name,
-                                scaleDescription: selectedItem.name === 'SCORE' ? selectedItem.scaleDescription : '', // Include scaleDescription
-                                fieldTemplates: selectedItem.fieldTemplates.map(field => ({
+                                formName: selectedItem.formName,
+                                score: selectedItem.score,
+                                scaleDescription: selectedItem.scaleDescription || '',  // Use the description directly
+                                fieldTemplates: validFields.map(field => ({
                                     name: field.name,
                                     type: field.type || 'text',
                                     position: field.position,
@@ -676,8 +775,9 @@ const TemplateForms = () => {
                                     section: field.section,
                                     hasDetails: field.hasDetails || false,
                                     details: field.details || '',
-                                    options: field.type === 'select' ? (field.options || []) : [],
-                                    scaleOptions: field.type === 'scale' ? (field.scaleOptions || []) : []
+                                    options: (field.type === 'select' || field.type === 'checkbox') ? (field.options || []) : [],
+                                    scaleOptions: field.type === 'scale' ? (field.scaleOptions || []) : [],
+                                    _id: field._id // Preserve existing field IDs for updates
                                 }))
                             };
 
