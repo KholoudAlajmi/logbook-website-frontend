@@ -25,24 +25,30 @@ const Announcement = () => {
 
     // Add announcement mutation
     const addAnnouncementMutation = useMutation({
-        mutationFn: async (formData) => {
-            const response = await api.post('/announcements', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            return response.data;
+        mutationFn: async (announcementData) => {
+            console.log('Sending announcement data:', announcementData); // Debug log
+            try {
+                const response = await api.post('/announcements', announcementData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                return response.data;
+            } catch (error) {
+                console.error('API Error:', error.response?.data || error); // Log full error
+                throw error;
+            }
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['announcements']);
-            setSelectedItem(null);
             setShowModal({ type: '', action: '', show: false });
+            setSelectedItem(null);
             alert('Announcement added successfully!');
         },
         onError: (error) => {
-            console.error('Add error:', error);
-            alert(error.response?.data?.message || 'Failed to add announcement');
+            console.error('Mutation Error:', error); // Log mutation error
+            alert(`Failed to add announcement: ${error.response?.data?.message || error.message}`);
         }
     });
 
@@ -72,6 +78,23 @@ const Announcement = () => {
             announcement.title.toLowerCase().includes(announcementSearch.toLowerCase()) ||
             announcement.body.toLowerCase().includes(announcementSearch.toLowerCase())
         );
+    };
+
+    // Update the submit handler
+    const handleSubmit = () => {
+        if (!selectedItem?.title || !selectedItem?.body) {
+            alert('Title and body are required');
+            return;
+        }
+
+        const announcementData = {
+            title: selectedItem.title.trim(),
+            body: selectedItem.body.trim(),
+            date: new Date().toISOString()
+        };
+
+        console.log('Submitting announcement:', announcementData); // Debug log
+        addAnnouncementMutation.mutate(announcementData);
     };
 
     return (
@@ -209,30 +232,7 @@ const Announcement = () => {
                     </Button>
                     <Button 
                         variant="primary"
-                        onClick={() => {
-                            if (!selectedItem?.title || !selectedItem?.body) {
-                                alert('Title and body are required');
-                                return;
-                            }
-
-                            const formData = new FormData();
-                            formData.append('title', selectedItem.title);
-                            formData.append('body', selectedItem.body);
-                            formData.append('date', selectedItem.date || new Date().toISOString());
-                            if (selectedItem.file) {
-                                formData.append('file', selectedItem.file);
-                            }
-
-                            addAnnouncementMutation.mutate(formData, {
-                                onSuccess: () => {
-                                    setShowModal({ type: '', action: '', show: false });
-                                    setSelectedItem(null);
-                                },
-                                onError: (error) => {
-                                    alert('Failed to add announcement: ' + error.message);
-                                }
-                            });
-                        }}
+                        onClick={handleSubmit}
                         disabled={!selectedItem?.title || !selectedItem?.body || addAnnouncementMutation.isPending}
                     >
                         {addAnnouncementMutation.isPending ? 'Adding...' : 'Add Announcement'}
