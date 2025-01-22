@@ -218,7 +218,6 @@ const TemplateForms = () => {
                             </Form.Group>
 
                             <Form.Group className="details-field">
-                                <Form.Label>Score</Form.Label>
                                 <p>{selectedItem.score || 'Not specified'}</p>
                             </Form.Group>
 
@@ -228,7 +227,6 @@ const TemplateForms = () => {
                             </Form.Group>
 
                             <Form.Group className="details-field">
-                                <Form.Label>Fields</Form.Label>
                                 <div className="fields-list">
                                     {selectedItem.fieldTemplates?.map((field, index) => (
                                         <div key={field._id || index} className="field-item">
@@ -329,7 +327,7 @@ const TemplateForms = () => {
 
                         {/* Add Score field */}
                         <Form.Group className="mb-3">
-                            <Form.Label>Score</Form.Label>
+                            <Form.Label>select</Form.Label>
                             <Form.Select
                                 value={selectedItem?.score || ''}
                                 onChange={(e) => {
@@ -375,7 +373,6 @@ const TemplateForms = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Fields</Form.Label>
                             <div className="fields-list">
                                 {selectedItem?.fieldTemplates?.map((field, index) => (
                                     <div key={index} className="field-item">
@@ -720,8 +717,8 @@ const TemplateForms = () => {
                                                 ...(prev?.fieldTemplates || []),
                                                 { 
                                                     name: '', 
-                                                    type: 'text',  // Always set a default type
-                                                    position: '', 
+                                                    type: 'text',
+                                                    position: 'left',  // Set default position to 'left'
                                                     response: '', 
                                                     section: '',
                                                     hasDetails: false,
@@ -757,16 +754,25 @@ const TemplateForms = () => {
                                 alert('At least one field is required');
                                 return;
                             }
+                            if (!selectedItem?.score) {
+                                alert('Score type is required');
+                                return;
+                            }
+                            if (selectedItem.score === 'OTHER' && !selectedItem?.scaleDescription?.trim()) {
+                                alert('Scale Description is required for custom score type');
+                                return;
+                            }
 
                             // Filter out empty/invalid fields
                             const validFields = selectedItem.fieldTemplates.filter(field => 
-                                field.name && field.type // Only include fields that have at least name and type
+                                field.name && field.type
                             );
 
                             const formData = {
                                 formName: selectedItem.formName,
                                 score: selectedItem.score,
-                                scaleDescription: selectedItem.scaleDescription || '',  // Use the description directly
+                                // Set scaleDescription based on score type
+                                scaleDescription: selectedItem.score === 'SCORE' ? scaleDescription : selectedItem.scaleDescription,
                                 fieldTemplates: validFields.map(field => ({
                                     name: field.name,
                                     type: field.type || 'text',
@@ -777,7 +783,7 @@ const TemplateForms = () => {
                                     details: field.details || '',
                                     options: (field.type === 'select' || field.type === 'checkbox') ? (field.options || []) : [],
                                     scaleOptions: field.type === 'scale' ? (field.scaleOptions || []) : [],
-                                    _id: field._id // Preserve existing field IDs for updates
+                                    _id: field._id
                                 }))
                             };
 

@@ -16,14 +16,13 @@ const Login = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/users/login', {
+      const response = await api.post(`/users/login`, {
         username: userInfo.username,
         password: userInfo.password
       });
 
       // Store token
       localStorage.setItem('token', response.data.token);
-      console.log('Token stored:', response.data.token); // Debug log
 
       // Navigate to home page
       navigate("/home");
