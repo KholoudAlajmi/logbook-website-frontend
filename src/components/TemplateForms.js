@@ -325,16 +325,17 @@ const TemplateForms = () => {
                             />
                         </Form.Group>
 
-                        {/* Add Score field */}
+                        {/* Update the score selection handler */}
                         <Form.Group className="mb-3">
-                            <Form.Label>select</Form.Label>
+                            <Form.Label>Score Type</Form.Label>
                             <Form.Select
                                 value={selectedItem?.score || ''}
                                 onChange={(e) => {
                                     setSelectedItem(prev => ({
                                         ...prev,
                                         score: e.target.value,
-                                        scaleDescription: e.target.value === 'OTHER' ? '' : prev.scaleDescription // Reset description for OTHER
+                                        scaleDescription: e.target.value === 'SCORE' ? scaleDescription : '',
+                                        fieldTemplates: prev?.fieldTemplates || [] // Ensure fieldTemplates exists
                                     }));
                                 }}
                             >
@@ -342,35 +343,29 @@ const TemplateForms = () => {
                                 <option value="SCORE">SCORE</option>
                                 <option value="OTHER">OTHER</option>
                             </Form.Select>
-
-                            {/* Show appropriate textarea based on score type */}
-                            {selectedItem?.score === 'SCORE' ? (
-                                <Form.Group className="mb-3 mt-2">
-                                    <Form.Label>Scale Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Enter scale description"
-                                        value={scaleDescription}
-                                        disabled
-                                    />
-                                </Form.Group>
-                            ) : selectedItem?.score === 'OTHER' && (
-                                <Form.Group className="mb-3 mt-2">
-                                    <Form.Label>Custom Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Enter your custom description..."
-                                        value={selectedItem.scaleDescription || ''}
-                                        onChange={(e) => setSelectedItem(prev => ({
-                                            ...prev,
-                                            scaleDescription: e.target.value
-                                        }))}
-                                    />
-                                </Form.Group>
-                            )}
                         </Form.Group>
+
+                        {/* Show appropriate textarea based on score type */}
+                        {selectedItem?.score && (  // Only show if score is selected
+                            <Form.Group className="mb-3 mt-2">
+                                <Form.Label>Scale Description</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    placeholder="Enter scale description"
+                                    value={selectedItem?.score === 'SCORE' ? scaleDescription : (selectedItem?.scaleDescription || '')}
+                                    onChange={(e) => {
+                                        if (selectedItem?.score === 'OTHER') {
+                                            setSelectedItem(prev => ({
+                                                ...prev,
+                                                scaleDescription: e.target.value
+                                            }));
+                                        }
+                                    }}
+                                    disabled={selectedItem?.score === 'SCORE'}
+                                />
+                            </Form.Group>
+                        )}
 
                         <Form.Group className="mb-3">
                             <div className="fields-list">
