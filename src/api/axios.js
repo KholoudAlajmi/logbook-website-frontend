@@ -1,10 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://hammerhead-app-z9szz.ondigitalocean.app',
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    baseURL: 'http://localhost:8000/',
+    
 });
 
 // Add a request interceptor to include token
@@ -28,7 +26,7 @@ api.interceptors.response.use(
         if (error.response?.status === 401) {
             // Clear token and redirect to login
             localStorage.removeItem('token');
-            window.location.href = '/';
+            // window.location.href = '/';
         }
         return Promise.reject(error);
     }
