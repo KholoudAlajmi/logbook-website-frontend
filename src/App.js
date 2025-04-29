@@ -6,6 +6,10 @@ import { UserProvider } from './context/UserProvider';
 import Login from './components/Login';
 import Home from './components/Home';
 import ChangePassword from './components/ChangePassword';
+import Tutor from './components/Tutor';
+import Resident from './components/Resident';
+import Announcement from './components/Announcement';
+import TemplateForms from './components/TemplateForms';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +28,10 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/tutor" element={<Tutor/>}/>
+            <Route path="/resident" element={<Resident/>}/>
+            <Route path="/announcement" element={<Announcement />} />
+            <Route path="/form" element={<TemplateForms />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>

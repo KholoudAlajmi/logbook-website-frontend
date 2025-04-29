@@ -6,6 +6,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from './components/Home';
 import Login from './components/Login';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Tutor from './components/Tutor';
+import Resident from './components/Resident';
+import Announcement from './components/Announcement';
+import TemplateForms from './components/TemplateForms';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient();
@@ -17,7 +21,23 @@ const router = createBrowserRouter([
   {
   path: "/home",
   element: <Home/>
-  }
+  },
+  {
+    path: "/tutor",
+    element: <Tutor/>
+  },
+  {
+    path: "/resident",
+    element: <Resident/>
+  },
+{
+  path: "/announcement",
+  element: <Announcement />
+},
+{
+  path: "/form",
+  element: <TemplateForms />
+}
 ]);
 
 
