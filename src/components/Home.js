@@ -22,6 +22,19 @@ const Home = () => {
       <button className="logout-button" onClick={handleLogout}>
         Logout
       </button>
+      <div className="card" onClick={() => navigate("/tutor")}>
+            <h2>Tutor</h2>
+          </div>
+          <div className="card" onClick={() => navigate("/resident")}>
+            <h2>Resident</h2>
+          </div>
+          <div className="card" onClick={() => navigate("/announcement")}>
+            <h2>Announcement</h2>
+          </div>
+          <div className="card" onClick={() => navigate("/form")}>
+            <h2>Template Forms</h2>
+          </div>
+
 
       <div className="main-container">
         <div
@@ -31,10 +44,9 @@ const Home = () => {
             display: "flex",
             justifyContent: "center",
             gap: "20px",
-          }}
+          }} 
         >
-          
-        </div>
+          </div>
       </div>
     </div>
   );
