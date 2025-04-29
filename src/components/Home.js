@@ -33,10 +33,7 @@ const Home = () => {
             gap: "20px",
           }}
         >
-          <Tutor />
-          <Resident />
-          <Announcement />
-          <TemplateForms />
+          
         </div>
       </div>
     </div>
