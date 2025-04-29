@@ -9,33 +9,21 @@ import TemplateForms from "./TemplateForms";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleLogout = () => {
     navigate("/");
   };
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.body.classList.toggle('dark-mode');
-  };
-
   return (
-    <div className={`background ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div className="background">
       <div className="logo-container">
         <img src={logo} alt="logo" className="logo" />
-        <button 
-          className="theme-toggle"
-          onClick={toggleDarkMode}
-        >
-          {isDarkMode ? '☾' : '☼'}
-        </button>
       </div>
       <button className="logout-button" onClick={handleLogout}>
         Logout
       </button>
 
-      <div className={`main-container ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className="main-container">
         <div
           className="container"
           style={{
@@ -45,10 +33,10 @@ const Home = () => {
             gap: "20px",
           }}
         >
-          <Tutor isDarkMode={isDarkMode} />
-          <Resident isDarkMode={isDarkMode} />
-          <Announcement isDarkMode={isDarkMode} />
-          <TemplateForms isDarkMode={isDarkMode} />
+          <Tutor />
+          <Resident />
+          <Announcement />
+          <TemplateForms />
         </div>
       </div>
     </div>
