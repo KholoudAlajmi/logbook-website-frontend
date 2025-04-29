@@ -49,6 +49,7 @@
   justify-content: center;
   width: 100%;
   position: relative;
+  padding-left: 0;
 }
 
 .split-container {
@@ -460,7 +461,7 @@ div.fields-list{
 .main-container {
     background: #ffffff;
     border-radius: 15px 15px 0 0;
-    padding: 30px;
+    padding: 45px;
     margin: 0;
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
@@ -469,14 +470,15 @@ div.fields-list{
     position: relative;
     bottom: 0;
     padding-top: 30px;
-    padding-bottom: 10px;
     z-index: 0;
+    margin-left: 160px;
+    width: calc(100% - 160px);
 }
 
 .logo-container {
   position: absolute;
   top: -5px;
-  left: 20px;
+  left: 35px;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -1398,15 +1400,47 @@ div.field-full-width{
     margin-top: 0.5rem;
     padding-left: 1.5rem;
 }
-.card {
-  color: white;
+
+.sidebar {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  margin: 10px 0;
-  padding: 20px;
+  gap: 15px;
+  padding: 10px 5px;
+  position: fixed;
+  left: 0;
+  top: 150px;
+  width: 150px;
+  background: #000000;
+  z-index: 10;
+}
+
+.card {
+  color: white;
+  margin: 0;
+  padding: 5px;
   height: auto;
-  min-height: 200px;
+  min-height: 30px;
+  background: #000000;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 3px solid white;
+}
+
+.card.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-left: 3px solid white;
 }
