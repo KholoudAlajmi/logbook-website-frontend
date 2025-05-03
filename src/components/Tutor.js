@@ -167,7 +167,8 @@ console.log("tutors", tutors)
                   style={{
                     width: "100%",
                     display: "flex",
-                    justifyContent: "center",
+                    flexDirection: "column",
+                    alignItems: "center",
                     gap: "20px",
                   }} 
                 >
@@ -190,15 +191,11 @@ console.log("tutors", tutors)
                   transition: "left 0.3s ease"
                 }}
               >
-                {isVisible ? "≡<" : "≡"}
+               {isVisible ? "<" : ">"}
               </button>
 
-
-
-
-        <div className="management-box">
-            <h2 className="box-title">Tutor</h2>
-            <div className="search-container">
+              <div className="header-box">
+              <div className="search-container">
                 <div className="search-wrapper">
                     <div className="search-bar">
                         <input
@@ -219,10 +216,14 @@ console.log("tutors", tutors)
                             });
                         }}
                     >
-                        +
+                        + Add Tutor
                     </button>
                 </div>
             </div>
+            </div>
+
+        <div className="management-box">
+          
             <div className="content">
                 {tutorsLoading ? (
                     <p>Loading tutors...</p>

@@ -80,7 +80,7 @@ const Home = () => {
           transition: "left 0.3s ease"
         }}
       >
-        {isVisible ? "≡<" : "≡"}
+        {isVisible ? "<" : ">"}
       </button>
         </div>
       </div>

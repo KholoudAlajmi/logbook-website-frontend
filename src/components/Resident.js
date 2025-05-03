@@ -192,7 +192,7 @@ const Resident = () => {
                   transition: "left 0.3s ease"
                 }}
               >
-                {isVisible ? "≡<" : "≡"}
+                {isVisible ? "<" : ">"}
               </button>
 
 
