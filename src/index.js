@@ -11,6 +11,7 @@ import Resident from './components/Resident';
 import Announcement from './components/Announcement';
 import TemplateForms from './components/TemplateForms';
 import AddForm from './components/AddForm';
+import EditForm from './components/EditForm';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient();
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
 {
   path: "/add-form",
   element: <AddForm />
+},
+{
+  path: "/edit-form/:formId",
+  element:<EditForm/>
 }
 
 ]);

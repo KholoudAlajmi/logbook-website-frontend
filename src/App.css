@@ -1606,3 +1606,114 @@ div.field-full-width{
 .cancel-btn:hover {
   background-color: #f5f5f5;
 }
+
+/* Form Details Page Styles */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  border-radius: 8px 8px 0 0;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn, .back-btn {
+  padding: 6px 15px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.form-details-container {
+  padding: 20px;
+}
+
+.form-details-header {
+  margin-bottom: 25px;
+}
+
+.form-details-header h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.score-type {
+  color: #666;
+  font-size: 16px;
+}
+
+.form-details-section {
+  margin-bottom: 30px;
+}
+
+.form-details-section h4 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.scale-description {
+  white-space: pre-line;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  border-left: 3px solid #ddd;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.field-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.field-card-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  padding: 10px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.field-number {
+  font-weight: bold;
+}
+
+.field-type {
+  text-transform: capitalize;
+  color: #555;
+  font-size: 14px;
+}
+
+.field-card-content {
+  padding: 15px;
+}
+
+.field-card-content p {
+  margin-bottom: 8px;
+}
+
+.field-options {
+  margin-top: 12px;
+}
+
+.field-options ul {
+  margin-top: 5px;
+  padding-left: 20px;
+}
+
+.field-options li {
+  margin-bottom: 5px;
+}

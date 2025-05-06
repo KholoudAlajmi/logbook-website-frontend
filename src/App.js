@@ -11,6 +11,7 @@ import Resident from './components/Resident';
 import Announcement from './components/Announcement';
 import TemplateForms from './components/TemplateForms';
 import AddForm from './components/AddForm';
+import EditForm from './components/EditForm';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,7 @@ function App() {
             <Route path="/announcement" element={<Announcement />} />
             <Route path="/form" element={<TemplateForms />} />
             <Route path="/add-form" element={<AddForm />} />
+            <Route path="/edit-form/:formId" element={<EditForm />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>

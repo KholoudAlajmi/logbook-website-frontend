@@ -7,6 +7,33 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../App.css";
 import logo from "../assets/logo.png";
 
+// Add custom styles for action buttons
+const actionButtonStyles = `
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .edit-button, .delete-button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+  }
+  
+  .edit-button {
+    background-color: #4285f4;
+    color: white;
+  }
+  
+  .delete-button {
+    background-color: #ea4335;
+    color: white;
+  }
+`;
+
 const TemplateForms = () => {
     const queryClient = useQueryClient();
     const [showModal, setShowModal] = useState({ type: '', action: '', show: false });
@@ -152,11 +179,12 @@ const TemplateForms = () => {
             return;
         }
         
-        if (window.confirm('Are you sure you want to delete this form?')) {
+        if (window.confirm(`Are you sure you want to delete this form? This action cannot be undone.`)) {
             try {
                 await deleteFormMutation.mutateAsync(id);
             } catch (error) {
                 console.error('Failed to delete form:', error);
+                alert('Error deleting form: ' + (error.response?.data?.message || error.message));
             }
         }
     };
@@ -226,7 +254,8 @@ const TemplateForms = () => {
                         {isVisible ? "<" : ">"}
                       </button>
 
-
+        {/* Apply custom styles */}
+        <style>{actionButtonStyles}</style>
 
         <div className="header-box">
             <div className="search-container">
@@ -258,121 +287,26 @@ const TemplateForms = () => {
                     filterForms(forms || []).map((form) => (
                         <div key={form._id} className="item">
                             <span>{form.formName}</span>
-                            <button 
-                                className="details-button"
-                                onClick={() => {
-                                    setSelectedItem(form);
-                                    setShowModal({ 
-                                        type: 'form-details', 
-                                        action: 'view', 
-                                        show: true 
-                                    });
-                                }}
-                            >
-                                Details
-                            </button>
+                            <div className="action-buttons">
+                                <button 
+                                    className="edit-button"
+                                    onClick={() => {
+                                        window.location.href = `/edit-form/${form._id}`;
+                                    }}
+                                >
+                                    Edit
+                                </button>
+                                <button 
+                                    className="delete-button"
+                                    onClick={() => handleDelete(form._id)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))
                 )}
             </div>
-
-            {/* Details Modal */}
-            <Modal
-                show={showModal.type === 'form-details' && showModal.show}
-                onHide={() => {
-                    setShowModal({ type: '', action: '', show: false });
-                }}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Form Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedItem && (
-                        <Form className="details-content">
-                            <Form.Group className="details-field">
-                                <Form.Label>Form Name</Form.Label>
-                                <p>{selectedItem.formName}</p>
-                            </Form.Group>
-
-                            <Form.Group className="details-field">
-                                <p>{selectedItem.score || 'Not specified'}</p>
-                            </Form.Group>
-
-                            <Form.Group className="details-field">
-                                <Form.Label>Scale Description</Form.Label>
-                                <p>{selectedItem.scaleDescription || 'Not specified'}</p>
-                            </Form.Group>
-
-                            <Form.Group className="details-field">
-                                <div className="fields-list">
-                                    {selectedItem.fieldTemplates?.map((field, index) => (
-                                        <div key={field._id || index} className="field-item">
-                                            <h3>Field {index + 1}</h3>
-                                            <p><strong>Name:</strong> {field.name}</p>
-                                            <p><strong>Details:</strong> {field.details || 'Not specified'}</p>
-                                            <p><strong>Type:</strong> {field.type}</p>
-                                            <p><strong>Position:</strong> {field.position || 'Not specified'}</p>
-                                            <p><strong>Response:</strong> {field.response || 'Not specified'}</p>
-                                            <p><strong>Section:</strong> {field.section || 'Not specified'}</p>
-                                            
-                                            {/* Show options for both select and checkbox types */}
-                                            {(field.type === 'select' || field.type === 'checkbox') && field.options && field.options.length > 0 && (
-                                                <>
-                                                    <p><strong>{field.type === 'select' ? 'Select Options:' : 'Checkbox Options:'}</strong></p>
-                                                    <ul>
-                                                        {field.options.map((option, i) => (
-                                                            <li key={i}>{option}</li>
-                                                        ))}
-                                                    </ul>
-                                                </>
-                                            )}
-
-                                            {/* Show scale options if type is scale */}
-                                            {field.type === 'scale' && field.scaleOptions && field.scaleOptions.length > 0 && (
-                                                <>
-                                                    <p><strong>Scale Options:</strong></p>
-                                                    <ul>
-                                                        {field.scaleOptions.map((option, i) => (
-                                                            <li key={i}>{option}</li>
-                                                        ))}
-                                                    </ul>
-                                                </>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            </Form.Group>
-                        </Form>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button 
-                        variant="primary"
-                        onClick={() => {
-                            setShowModal({ 
-                                type: 'form', 
-                                action: 'edit', 
-                                show: true 
-                            });
-                        }}
-                    >
-                        Edit
-                    </Button>
-                    <Button 
-                        variant="danger"
-                        onClick={() => handleDelete(selectedItem._id)}
-                    >
-                        Delete
-                    </Button>
-                    <Button 
-                        variant="secondary" 
-                        onClick={() => setShowModal({ type: '', action: '', show: false })}
-                    >
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
 
             {/* Add Form Modal */}
             <Modal 
