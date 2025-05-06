@@ -227,8 +227,7 @@ const TemplateForms = () => {
 
 
 
-        <div className="management-box">
-            <h2 className="box-title">Forms</h2>
+        <div className="header-box">
             <div className="search-container">
                 <div className="search-wrapper">
                     <div className="search-bar">

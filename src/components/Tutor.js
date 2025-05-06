@@ -223,29 +223,46 @@ console.log("tutors", tutors)
             </div>
 
         <div className="management-box">
-          
             <div className="content">
                 {tutorsLoading ? (
                     <p>Loading tutors...</p>
                 ) : (
-                    filterTutors(tutors || []).map((tutor) => (
-                        <div key={tutor._id} className="item">
-                            <span>{tutor.username}</span>
-                            <button 
-                                className="details-button"
-                                onClick={() => {
-                                    setSelectedItem(tutor);
-                                    setShowModal({ 
-                                        type: 'tutor-details', 
-                                        action: 'view', 
-                                        show: true 
-                                    });
-                                }}
-                            >
-                                Details
-                            </button>
+                    <div className="tutor-table">
+                        <div className="tutor-header">
+                            <div className="tutor-name">Tutor Name</div>
+                            <div className="tutor-email">Tutor Email</div>
+                            <div className="phone-number">Phone Number</div>
+                            <div className="action">Action</div>
                         </div>
-                    ))
+                        {filterTutors(tutors || []).map((tutor) => (
+                            <div key={tutor._id} className="tutor-row">
+                                <div className="tutor-name">{tutor.username}</div>
+                                <div className="tutor-email">{tutor.email || '-'}</div>
+                                <div className="phone-number">{tutor.phone || '-'}</div>
+                                <div className="action">
+                                    <button 
+                                        className="edit-button"
+                                        onClick={() => {
+                                            setSelectedItem(tutor);
+                                            setShowModal({ 
+                                                type: 'tutor', 
+                                                action: 'edit', 
+                                                show: true 
+                                            });
+                                        }}
+                                    >
+                                        <span className="edit-icon">✎</span> Edit
+                                    </button>
+                                    <button 
+                                        className="delete-button"
+                                        onClick={() => handleDelete(tutor._id)}
+                                    >
+                                        <span className="delete-icon">🗑</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
 
@@ -288,17 +305,20 @@ console.log("tutors", tutors)
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Enter password"
-                                onChange={(e) => setSelectedItem(prev => ({
-                                    ...prev,
-                                    password: e.target.value
-                                }))}
-                            />
-                        </Form.Group>
+                        {showModal.action !== 'edit' && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Enter password"
+                                    onChange={(e) => setSelectedItem(prev => ({
+                                        ...prev,
+                                        password: e.target.value
+                                    }))}
+                                />
+                            </Form.Group>
+                        )}
+                        
                         <Form.Group className="mb-3">
                             <Form.Label>Phone Number</Form.Label>
                             <Form.Control
@@ -320,148 +340,45 @@ console.log("tutors", tutors)
                     >
                         Cancel
                     </Button>
-                    <Button 
-                        variant="primary"
-                        onClick={() => {
-                            const tutorData = {
-                                username: selectedItem.username,
-                                email: selectedItem.email,
-                                password: selectedItem.password,
-                                phone: selectedItem.phone,
-                                role: 'tutor'
-                            };
-                            addTutorMutation.mutate(tutorData);
-                        }}
-                        disabled={!selectedItem?.username || !selectedItem?.email || !selectedItem?.password}
-                    >
-                        {addTutorMutation.isPending ? 'Adding...' : 'Add Tutor'}
-                    </Button>
+                    {showModal.action === 'edit' ? (
+                        <Button 
+                            variant="primary"
+                            onClick={() => {
+                                updateTutorMutation.mutate({
+                                    _id: selectedItem._id,
+                                    username: selectedItem.username,
+                                    email: selectedItem.email,
+                                    phone: selectedItem.phone || ''
+                                });
+                            }}
+                            disabled={!selectedItem?.username || !selectedItem?.email}
+                        >
+                            {updateTutorMutation.isPending ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                    ) : (
+                        <Button 
+                            variant="primary"
+                            onClick={() => {
+                                const tutorData = {
+                                    username: selectedItem.username,
+                                    email: selectedItem.email,
+                                    password: selectedItem.password,
+                                    phone: selectedItem.phone,
+                                    role: 'tutor'
+                                };
+                                addTutorMutation.mutate(tutorData);
+                            }}
+                            disabled={!selectedItem?.username || !selectedItem?.email || !selectedItem?.password}
+                        >
+                            {addTutorMutation.isPending ? 'Adding...' : 'Add Tutor'}
+                        </Button>
+                    )}
                 </Modal.Footer>
             </Modal>
 
-            {/* Details Modal */}
-            <Modal
-                show={showModal.type === 'tutor-details' && showModal.show}
-                onHide={() => {
-                    setShowModal({ type: '', action: '', show: false });
-                    setIsEditing(false);
-                }}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Tutor Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedItem && (
-                        <Form className="details-content">
-                            <Form.Group className="details-field">
-                                <Form.Label>Username</Form.Label>
-                                {isEditing ? (
-                                    <Form.Control
-                                        type="text"
-                                        value={selectedItem.username || ''}
-                                        onChange={(e) => setSelectedItem(prev => ({
-                                            ...prev,
-                                            username: e.target.value
-                                        }))}
-                                    />
-                                ) : (
-                                    <p>{selectedItem.username}</p>
-                                )}
-                            </Form.Group>
-                            <Form.Group className="details-field">
-                                <Form.Label>Email</Form.Label>
-                                {isEditing ? (
-                                    <Form.Control
-                                        type="email"
-                                        value={selectedItem.email || ''}
-                                        onChange={(e) => setSelectedItem(prev => ({
-                                            ...prev,
-                                            email: e.target.value
-                                        }))}
-                                    />
-                                ) : (
-                                    <p>{selectedItem.email}</p>
-                                )}
-                            </Form.Group>
-                            <Form.Group className="details-field">
-                                <Form.Label>Phone</Form.Label>
-                                {isEditing ? (
-                                    <Form.Control
-                                        type="tel"
-                                        value={selectedItem.phone || ''}
-                                        onChange={(e) => setSelectedItem(prev => ({
-                                            ...prev,
-                                            phone: e.target.value
-                                        }))}
-                                    />
-                                ) : (
-                                    <p>{selectedItem.phone || 'Not provided'}</p>
-                                )}
-                            </Form.Group>
-                        </Form>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    {isEditing ? (
-                        <>
-                            <Button
-                                variant="success"
-                                onClick={() => {
-                                    if (!selectedItem.username || !selectedItem.email) {
-                                        alert('Username and email are required');
-                                        return;
-                                    }
-                                    try {
-                                        updateTutorMutation.mutate({
-                                            _id: selectedItem._id,
-                                            username: selectedItem.username,
-                                            email: selectedItem.email,
-                                            phone: selectedItem.phone || ''
-                                        });
-                                    } catch (error) {
-                                        console.error('Update error:', error);
-                                        alert('Failed to update tutor');
-                                    }
-                                }}
-                                disabled={updateTutorMutation.isPending}
-                            >
-                                {updateTutorMutation.isPending ? 'Saving...' : 'Save Changes'}
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                onClick={() => setIsEditing(false)}
-                            >
-                                Cancel
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Button
-                                variant="primary"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                Edit
-                            </Button>
-                            <Button
-                                variant="danger"
-                                onClick={() => handleDelete(selectedItem._id)}
-                            >
-                                Delete
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                onClick={() => setShowModal({ type: '', action: '', show: false })}
-                            >
-                                Close
-                            </Button>
-                        </>
-                    )}
-                </Modal.Footer>
-            </Modal>
             </div>
         </div>
-        </div>
+        </div> 
         </div>
     );
 };

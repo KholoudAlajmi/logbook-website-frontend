@@ -169,7 +169,8 @@ const Resident = () => {
                   style={{
                     width: "100%",
                     display: "flex",
-                    justifyContent: "center",
+                    flexDirection: "column",
+                    alignItems: "center",
                     gap: "20px",
                   }} 
                 >
@@ -196,8 +197,7 @@ const Resident = () => {
               </button>
 
 
-        <div className="management-box">
-            <h2 className="box-title">Resident</h2>
+            <div className="header-box">
             <div className="search-container">
                 <div className="search-wrapper">
                     <div className="search-bar">
@@ -219,32 +219,52 @@ const Resident = () => {
                             });
                         }}
                     >
-                        +
+                        + Add Resident
                     </button>
                 </div>
             </div>
+            </div>
+            <div className="management-box">
             <div className="content">
                 {residentsLoading ? (
                     <p>Loading residents...</p>
                 ) : (
-                    filterResidents(residents || []).map((resident) => (
-                        <div key={resident._id} className="item">
-                            <span>{resident.username}</span>
-                            <button 
-                                className="details-button"
-                                onClick={() => {
-                                    setSelectedItem(resident);
-                                    setShowModal({ 
-                                        type: 'resident-details', 
-                                        action: 'view', 
-                                        show: true 
-                                    });
-                                }}
-                            >
-                                Details
-                            </button>
+                    <div className="tutor-table">
+                        <div className="tutor-header">
+                            <div className="tutor-name">Resident Name</div>
+                            <div className="tutor-email">Resident Email</div>
+                            <div className="phone-number">Phone Number</div>
+                            <div className="action">Action</div>
                         </div>
-                    ))
+                        {filterResidents(residents || []).map((resident) => (
+                            <div key={resident._id} className="tutor-row">
+                                <div className="tutor-name">{resident.username}</div>
+                                <div className="tutor-email">{resident.email || '-'}</div>
+                                <div className="phone-number">{resident.phone || '-'}</div>
+                                <div className="action">
+                                    <button 
+                                        className="edit-button"
+                                        onClick={() => {
+                                            setSelectedItem(resident);
+                                            setShowModal({ 
+                                                type: 'resident', 
+                                                action: 'edit', 
+                                                show: true 
+                                            });
+                                        }}
+                                    >
+                                        <span className="edit-icon">✎</span> Edit
+                                    </button>
+                                    <button 
+                                        className="delete-button"
+                                        onClick={() => handleDelete(resident._id)}
+                                    >
+                                        <span className="delete-icon">🗑</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
 
@@ -287,17 +307,20 @@ const Resident = () => {
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Enter password"
-                                onChange={(e) => setSelectedItem(prev => ({
-                                    ...prev,
-                                    password: e.target.value
-                                }))}
-                            />
-                        </Form.Group>
+                        {showModal.action !== 'edit' && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Enter password"
+                                    onChange={(e) => setSelectedItem(prev => ({
+                                        ...prev,
+                                        password: e.target.value
+                                    }))}
+                                />
+                            </Form.Group>
+                        )}
+                        
                         <Form.Group className="mb-3">
                             <Form.Label>Phone Number</Form.Label>
                             <Form.Control
@@ -319,145 +342,43 @@ const Resident = () => {
                     >
                         Cancel
                     </Button>
-                    <Button 
-                        variant="primary"
-                        onClick={() => {
-                            const residentData = {
-                                username: selectedItem.username,
-                                email: selectedItem.email,
-                                password: selectedItem.password,
-                                phone: selectedItem.phone,
-                                role: 'resident'
-                            };
-                            addResidentMutation.mutate(residentData);
-                        }}
-                        disabled={!selectedItem?.username || !selectedItem?.email || !selectedItem?.password}
-                    >
-                        {addResidentMutation.isPending ? 'Adding...' : 'Add Resident'}
-                    </Button>
+                    {showModal.action === 'edit' ? (
+                        <Button 
+                            variant="primary"
+                            onClick={() => {
+                                updateResidentMutation.mutate({
+                                    _id: selectedItem._id,
+                                    username: selectedItem.username,
+                                    email: selectedItem.email,
+                                    phone: selectedItem.phone || ''
+                                });
+                            }}
+                            disabled={!selectedItem?.username || !selectedItem?.email}
+                        >
+                            {updateResidentMutation.isPending ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                    ) : (
+                        <Button 
+                            variant="primary"
+                            onClick={() => {
+                                const residentData = {
+                                    username: selectedItem.username,
+                                    email: selectedItem.email,
+                                    password: selectedItem.password,
+                                    phone: selectedItem.phone,
+                                    role: 'resident'
+                                };
+                                addResidentMutation.mutate(residentData);
+                            }}
+                            disabled={!selectedItem?.username || !selectedItem?.email || !selectedItem?.password}
+                        >
+                            {addResidentMutation.isPending ? 'Adding...' : 'Add Resident'}
+                        </Button>
+                    )}
                 </Modal.Footer>
             </Modal>
 
-            {/* Details Modal */}
-            <Modal
-                show={showModal.type === 'resident-details' && showModal.show}
-                onHide={() => {
-                    setShowModal({ type: '', action: '', show: false });
-                    setIsEditing(false);
-                }}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Resident Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedItem && (
-                        <Form className="details-content">
-                            <Form.Group className="details-field">
-                                <Form.Label>Username</Form.Label>
-                                {isEditing ? (
-                                    <Form.Control
-                                        type="text"
-                                        value={selectedItem.username || ''}
-                                        onChange={(e) => setSelectedItem(prev => ({
-                                            ...prev,
-                                            username: e.target.value
-                                        }))}
-                                    />
-                                ) : (
-                                    <p>{selectedItem.username}</p>
-                                )}
-                            </Form.Group>
-                            <Form.Group className="details-field">
-                                <Form.Label>Email</Form.Label>
-                                {isEditing ? (
-                                    <Form.Control
-                                        type="email"
-                                        value={selectedItem.email || ''}
-                                        onChange={(e) => setSelectedItem(prev => ({
-                                            ...prev,
-                                            email: e.target.value
-                                        }))}
-                                    />
-                                ) : (
-                                    <p>{selectedItem.email}</p>
-                                )}
-                            </Form.Group>
-                            <Form.Group className="details-field">
-                                <Form.Label>Phone</Form.Label>
-                                {isEditing ? (
-                                    <Form.Control
-                                        type="tel"
-                                        value={selectedItem.phone || ''}
-                                        onChange={(e) => setSelectedItem(prev => ({
-                                            ...prev,
-                                            phone: e.target.value
-                                        }))}
-                                    />
-                                ) : (
-                                    <p>{selectedItem.phone || 'Not provided'}</p>
-                                )}
-                            </Form.Group>
-                        </Form>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    {isEditing ? (
-                        <>
-                            <Button
-                                variant="success"
-                                onClick={() => {
-                                    if (!selectedItem.username || !selectedItem.email) {
-                                        alert('Username and email are required');
-                                        return;
-                                    }
-                                    try {
-                                        updateResidentMutation.mutate({
-                                            _id: selectedItem._id,
-                                            username: selectedItem.username,
-                                            email: selectedItem.email,
-                                            phone: selectedItem.phone || ''
-                                        });
-                                    } catch (error) {
-                                        console.error('Update error:', error);
-                                        alert('Failed to update resident');
-                                    }
-                                }}
-                                disabled={updateResidentMutation.isPending}
-                            >
-                                {updateResidentMutation.isPending ? 'Saving...' : 'Save Changes'}
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                onClick={() => setIsEditing(false)}
-                            >
-                                Cancel
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Button
-                                variant="primary"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                Edit
-                            </Button>
-                            <Button
-                                variant="danger"
-                                onClick={() => handleDelete(selectedItem._id)}
-                            >
-                                Delete
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                onClick={() => setShowModal({ type: '', action: '', show: false })}
-                            >
-                                Close
-                            </Button>
-                        </>
-                    )}
-                </Modal.Footer>
-            </Modal>
+      
             </div>
         </div>
         </div>

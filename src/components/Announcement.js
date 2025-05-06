@@ -180,7 +180,6 @@ const Announcement = () => {
 
 
         <div className="management-box">
-            <h2 className="box-title">Announcements</h2>
             <div className="search-container">
                 <div className="search-wrapper">
                     <div className="search-bar">

@@ -198,11 +198,7 @@
     z-index: 1;
     border: 1px solid #e0e0e0;
   }
-  
-  .header-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  }
+
 
 .management-box {
   background: #ffffff;
@@ -217,10 +213,7 @@
   border: 1px solid #e0e0e0;
 }
 
-.management-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
+
 
 .box-title {
   color: #000000;
@@ -1456,4 +1449,104 @@ div.field-full-width{
 .card.active {
   background-color: rgba(255, 255, 255, 0.2);
   border-left: 3px solid white;
+}
+
+/* Tutor Table Styles */
+.tutor-table {
+  width: 100%;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tutor-header {
+  display: flex;
+  background-color: #f9f9f9;
+  padding: 15px;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.tutor-row {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.tutor-row:last-child {
+  border-bottom: none;
+}
+
+.tutor-name, 
+.tutor-email, 
+.phone-number {
+  flex: 1;
+}
+
+.action {
+  width: 120px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.edit-button, 
+.delete-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.edit-button {
+  color: #333;
+  font-size: 14px;
+}
+
+.edit-button:hover {
+  background-color: #f0f0f0;
+}
+
+.delete-button {
+  color: #d9534f;
+}
+
+.delete-button:hover {
+  background-color: #fff5f5;
+}
+
+.edit-icon, 
+.delete-icon {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+.delete-icon {
+  font-size: 18px;
+}
+
+/* Add Tutor Button Styles */
+.add-button-small {
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.2s;
+}
+
+.add-button-small:hover {
+  background-color: #333;
 }
