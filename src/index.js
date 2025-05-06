@@ -10,6 +10,7 @@ import Tutor from './components/Tutor';
 import Resident from './components/Resident';
 import Announcement from './components/Announcement';
 import TemplateForms from './components/TemplateForms';
+import AddForm from './components/AddForm';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient();
@@ -37,8 +38,14 @@ const router = createBrowserRouter([
 {
   path: "/form",
   element: <TemplateForms />
+},
+{
+  path: "/add-form",
+  element: <AddForm />
 }
+
 ]);
+
 
 
 

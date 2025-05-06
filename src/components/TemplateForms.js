@@ -199,7 +199,8 @@ const TemplateForms = () => {
                           style={{
                             width: "100%",
                             display: "flex",
-                            justifyContent: "center",
+                            flexDirection: "column",
+                            alignItems: "center",
                             gap: "20px",
                           }} 
                         >
@@ -241,18 +242,15 @@ const TemplateForms = () => {
                     <button 
                         className="add-button-small"
                         onClick={() => {
-                            setSelectedItem(null);
-                            setShowModal({ 
-                                type: 'form', 
-                                action: 'add', 
-                                show: true 
-                            });
+                            navigate('/add-form');
                         }}
                     >
-                        +
+                        + Add Form
                     </button>
                 </div>
             </div>
+            </div>
+            <div className="management-box">
             <div className="content">
                 {formsLoading ? (
                     <p>Loading forms...</p>
