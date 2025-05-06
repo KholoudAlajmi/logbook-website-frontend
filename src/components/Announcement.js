@@ -115,7 +115,7 @@ const Announcement = () => {
     };
 
     return (
- <div className="background">
+    <div className="background">
       <div className="logo-container">
         <img src={logo} alt="logo" className="logo" />
       </div>
@@ -151,7 +151,8 @@ const Announcement = () => {
           style={{
             width: "100%",
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
             gap: "20px",
           }} 
         >
@@ -179,7 +180,7 @@ const Announcement = () => {
       
 
 
-        <div className="management-box">
+      <div className="header-box">
             <div className="search-container">
                 <div className="search-wrapper">
                     <div className="search-bar">
@@ -201,10 +202,12 @@ const Announcement = () => {
                             });
                         }}
                     >
-                        +
+                        + Add Announcement
                     </button>
                 </div>
             </div>
+            </div>
+            <div className="management-box">
             <div className="content">
                 {announcementsLoading ? (
                     <p>Loading announcements...</p>
@@ -381,6 +384,7 @@ const Announcement = () => {
         </div>
         </div>
         </div>
+      
         </div>
     );
 };
