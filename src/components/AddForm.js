@@ -174,34 +174,39 @@ const AddFormPage = () => {
                             <Form.Group className="mb-3">
                                 <Form.Label>Score Type</Form.Label>
                                 <Form.Select
-                                    value={formData.score}
+                                    value={formData?.score || ''}
                                     onChange={(e) => {
-                                        const scoreType = e.target.value;
+                                        const newScore = e.target.value;
                                         setFormData(prev => ({
                                             ...prev,
-                                            score: scoreType,
-                                            scaleDescription: scoreType === 'DEFAULT' ? defaultScaleDescription : prev.scaleDescription
+                                            score: newScore,
+                                            scaleDescription: newScore === 'SCORE' ? defaultScaleDescription : ''
                                         }));
                                     }}
                                 >
-                                    <option value="">Select Score Type</option>
-                                    <option value="DEFAULT">Default Scale (1-5)</option>
-                                    <option value="OTHER">Custom Scale</option>
+                                    <option value="">Select Score</option>
+                                    <option value="SCORE">SCORE</option>
+                                    <option value="OTHER">OTHER</option>
                                 </Form.Select>
                             </Form.Group>
 
-                            {formData.score === 'OTHER' && (
-                                <Form.Group className="mb-3">
+                            {formData?.score && (
+                                <Form.Group className="mb-3 mt-2">
                                     <Form.Label>Scale Description</Form.Label>
                                     <Form.Control
                                         as="textarea"
-                                        rows={5}
+                                        rows={3}
                                         placeholder="Enter scale description"
-                                        value={formData.scaleDescription}
-                                        onChange={(e) => setFormData(prev => ({
-                                            ...prev,
-                                            scaleDescription: e.target.value
-                                        }))}
+                                        value={formData?.score === 'SCORE' ? defaultScaleDescription : (formData?.scaleDescription || '')}
+                                        onChange={(e) => {
+                                            if (formData?.score === 'OTHER') {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    scaleDescription: e.target.value
+                                                }));
+                                            }
+                                        }}
+                                        disabled={formData?.score === 'SCORE'}
                                     />
                                 </Form.Group>
                             )}

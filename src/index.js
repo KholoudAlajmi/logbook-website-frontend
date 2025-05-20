@@ -12,6 +12,7 @@ import Announcement from './components/Announcement';
 import TemplateForms from './components/TemplateForms';
 import AddForm from './components/AddForm';
 import EditForm from './components/EditForm';
+import ViewForm from './components/ViewForm';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient();
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
 {
   path: "/edit-form/:formId",
   element:<EditForm/>
+},
+{
+  path: "/view-form/:formId",
+  element: <ViewForm />
 }
 
 ]);

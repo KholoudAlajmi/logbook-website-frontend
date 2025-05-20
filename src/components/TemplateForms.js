@@ -286,12 +286,16 @@ const TemplateForms = () => {
                 ) : (
                     filterForms(forms || []).map((form) => (
                         <div key={form._id} className="item">
-                            <span>{form.formName}</span>
+                            <div className="form-preview" onClick={() => {
+                                navigate(`/view-form/${form._id}`);
+                            }}>
+                                <span>{form.formName}</span>
+                            </div>
                             <div className="action-buttons">
                                 <button 
                                     className="edit-button"
                                     onClick={() => {
-                                        window.location.href = `/edit-form/${form._id}`;
+                                        navigate(`/edit-form/${form._id}`);
                                     }}
                                 >
                                     Edit
@@ -308,513 +312,81 @@ const TemplateForms = () => {
                 )}
             </div>
 
-            {/* Add Form Modal */}
+            {/* View Form Modal */}
             <Modal 
-                show={showModal.type === 'form' && showModal.show}
+                show={showModal.type === 'form' && showModal.action === 'view' && showModal.show}
                 onHide={() => setShowModal({ type: '', action: '', show: false })}
                 centered
                 size="lg"
-                className="add-form-modal"
+                className="view-form-modal"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>
-                        {showModal.action === 'edit' ? 'Edit Form' : 'Add New Form'}
-                    </Modal.Title>
+                    <Modal.Title>Form Template: {selectedItem?.formName}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Form Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter form name"
-                                value={selectedItem?.formName || ''}
-                                onChange={(e) => setSelectedItem(prev => ({
-                                    ...prev,
-                                    formName: e.target.value,
-                                    fieldTemplates: prev?.fieldTemplates || []
-                                }))}
-                            />
-                        </Form.Group>
-
-                        {/* Update the score selection handler */}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Score Type</Form.Label>
-                            <Form.Select
-                                value={selectedItem?.score || ''}
-                                onChange={(e) => {
-                                    setSelectedItem(prev => ({
-                                        ...prev,
-                                        score: e.target.value,
-                                        scaleDescription: e.target.value === 'SCORE' ? scaleDescription : '',
-                                        fieldTemplates: prev?.fieldTemplates || [] // Ensure fieldTemplates exists
-                                    }));
-                                }}
-                            >
-                                <option value="">Select Score</option>
-                                <option value="SCORE">SCORE</option>
-                                <option value="OTHER">OTHER</option>
-                            </Form.Select>
-                        </Form.Group>
-
-                        {/* Show appropriate textarea based on score type */}
-                        {selectedItem?.score && (  // Only show if score is selected
-                            <Form.Group className="mb-3 mt-2">
-                                <Form.Label>Scale Description</Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    rows={3}
-                                    placeholder="Enter scale description"
-                                    value={selectedItem?.score === 'SCORE' ? scaleDescription : (selectedItem?.scaleDescription || '')}
-                                    onChange={(e) => {
-                                        if (selectedItem?.score === 'OTHER') {
-                                            setSelectedItem(prev => ({
-                                                ...prev,
-                                                scaleDescription: e.target.value
-                                            }));
-                                        }
-                                    }}
-                                    disabled={selectedItem?.score === 'SCORE'}
-                                />
-                            </Form.Group>
-                        )}
-
-                        <Form.Group className="mb-3">
-                            <div className="fields-list">
-                                {selectedItem?.fieldTemplates?.map((field, index) => (
-                                    <div key={index} className="field-item">
-                                        <div className="field-header">
-                                            <h3>Field {index + 1}</h3>
-                                            <Button 
-                                                variant="danger" 
-                                                size="sm"
-                                                className="remove-field-btn"
-                                                onClick={async () => {
-                                                    try {
-                                                        if (field._id) {
-                                                            // If field exists in database, delete it
-                                                            await deleteFieldMutation.mutateAsync(field._id);
-                                                            // Only update local state after successful deletion
-                                                            const newFields = [...selectedItem.fieldTemplates];
-                                                            newFields.splice(index, 1);
-                                                            setSelectedItem(prev => ({
-                                                                ...prev,
-                                                                fieldTemplates: newFields
-                                                            }));
-                                                        } else {
-                                                            // If field doesn't exist in DB, just update local state
-                                                            const newFields = [...selectedItem.fieldTemplates];
-                                                            newFields.splice(index, 1);
-                                                            setSelectedItem(prev => ({
-                                                                ...prev,
-                                                                fieldTemplates: newFields
-                                                            }));
-                                                        }
-                                                    } catch (error) {
-                                                        console.error('Failed to delete field:', error);
-                                                    }
-                                                }}
-                                            >
-                                                Remove
-                                            </Button>
-                                        </div>
-
-                                        <div className="field-content">
-                                            {/* Name - Full width */}
-                                            <div className="field-full-width">
-                                                <Form.Group className="mb-2">
-                                                    <Form.Label>Name</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        value={field.name || ''}
-                                                        onChange={(e) => {
-                                                            const newFields = [...selectedItem.fieldTemplates];
-                                                            newFields[index] = {
-                                                                ...newFields[index],
-                                                                name: e.target.value
-                                                            };
-                                                            setSelectedItem(prev => ({
-                                                                ...prev,
-                                                                fieldTemplates: newFields
-                                                            }));
-                                                        }}
-                                                    />
-                                                </Form.Group>
-                                            </div>
-
-                                            {/* Has Details - Full width */}
-                                            <div className="field-full-width">
-                                                <Form.Group className="mb-2">
-                                                    <Form.Check
-                                                        type="checkbox"
-                                                        label="Has Details"
-                                                        checked={field.hasDetails || false}
-                                                        onChange={(e) => {
-                                                            const newFields = [...selectedItem.fieldTemplates];
-                                                            newFields[index] = {
-                                                                ...newFields[index],
-                                                                hasDetails: e.target.checked,
-                                                                details: e.target.checked ? (newFields[index].details || '') : ''
-                                                            };
-                                                            setSelectedItem(prev => ({
-                                                                ...prev,
-                                                                fieldTemplates: newFields
-                                                            }));
-                                                        }}
-                                                    />
-                                                </Form.Group>
-                                            </div>
-
-                                            {/* Details - Full width when visible */}
-                                            {field.hasDetails && (
-                                                <div className="field-full-width">
-                                                    <Form.Group className="mb-2">
-                                                        <Form.Label>Details</Form.Label>
-                                                        <Form.Control
-                                                            as="textarea"
-                                                            rows={2}
-                                                            value={field.details || ''}
-                                                            onChange={(e) => {
-                                                                const newFields = [...selectedItem.fieldTemplates];
-                                                                newFields[index] = {
-                                                                    ...newFields[index],
-                                                                    details: e.target.value
-                                                                };
-                                                                setSelectedItem(prev => ({
-                                                                    ...prev,
-                                                                    fieldTemplates: newFields
-                                                                }));
-                                                            }}
-                                                            placeholder="Enter details for this field"
-                                                        />
-                                                    </Form.Group>
-                                                </div>
-                                            )}
-
-                                            {/* Type - Half width */}
-                                            <Form.Group className="mb-2">
-                                                <Form.Label>Type</Form.Label>
-                                                <Form.Select
-                                                    value={field.type || ''}
-                                                    onChange={(e) => {
-                                                        const newFields = [...selectedItem.fieldTemplates];
-                                                        newFields[index] = {
-                                                            ...newFields[index],
-                                                            type: e.target.value,
-                                                            options: e.target.value === 'select' || e.target.value === 'checkbox' ? [] : undefined,
-                                                            scaleOptions: e.target.value === 'scale' ? [] : undefined
-                                                        };
-                                                        setSelectedItem(prev => ({
-                                                            ...prev,
-                                                            fieldTemplates: newFields
-                                                        }));
-                                                    }}
-                                                >
-                                                    <option value="">Select Type</option>
-                                                    <option value="text">Text</option>
-                                                    <option value="textArea">Text Area</option>
-                                                    <option value="date">Date</option>
-                                                    <option value="select">Select</option>
-                                                    <option value="scale">Scale</option>
-                                                    <option value="checkbox">Checkbox</option>
-                                                </Form.Select>
-                                            </Form.Group>
-
-                                            {/* Position - Half width */}
-                                            <Form.Group className="mb-2">
-                                                <Form.Label>Position</Form.Label>
-                                                <Form.Select
-                                                    value={field.position || ''}
-                                                    onChange={(e) => {
-                                                        const newFields = [...selectedItem.fieldTemplates];
-                                                        newFields[index] = {
-                                                            ...newFields[index],
-                                                            position: e.target.value
-                                                        };
-                                                        setSelectedItem(prev => ({
-                                                            ...prev,
-                                                            fieldTemplates: newFields
-                                                        }));
-                                                    }}
-                                                >
-                                                    <option value="">Select Position</option>
-                                                    <option value="left">Left</option>
-                                                    <option value="right">Right</option>
-                                                </Form.Select>
-                                            </Form.Group>
-
-                                            {/* Response - Half width */}
-                                            <Form.Group className="mb-2">
-                                                <Form.Label>Response</Form.Label>
-                                                <Form.Select
-                                                    value={field.response || ''}
-                                                    onChange={(e) => {
-                                                        const newFields = [...selectedItem.fieldTemplates];
-                                                        newFields[index] = {
-                                                            ...newFields[index],
-                                                            response: e.target.value
-                                                        };
-                                                        setSelectedItem(prev => ({
-                                                            ...prev,
-                                                            fieldTemplates: newFields
-                                                        }));
-                                                    }}
-                                                >
-                                                    <option value="">Select Response</option>
-                                                    <option value="tutor">Tutor</option>
-                                                    <option value="resident">Resident</option>
-                                                </Form.Select>
-                                            </Form.Group>
-
-                                            {/* Section - Half width */}
-                                            <Form.Group className="mb-2">
-                                                <Form.Label>Section</Form.Label>
-                                                <Form.Select
-                                                    value={field.section || ''}
-                                                    onChange={(e) => {
-                                                        const newFields = [...selectedItem.fieldTemplates];
-                                                        newFields[index] = {
-                                                            ...newFields[index],
-                                                            section: e.target.value
-                                                        };
-                                                        setSelectedItem(prev => ({
-                                                            ...prev,
-                                                            fieldTemplates: newFields
-                                                        }));
-                                                    }}
-                                                >
-                                                    <option value="">Select Section</option>
-                                                    {[...Array(10)].map((_, i) => (
-                                                        <option key={i + 1} value={i + 1}>
-                                                            {i + 1}
-                                                        </option>
+                    <div className="form-details">
+                        <div className="score-section">
+                            <h4>Score Type: {selectedItem?.score}</h4>
+                            {selectedItem?.score && (
+                                <div className="scale-description">
+                                    <h5>Scale Description:</h5>
+                                    <pre>{selectedItem?.scaleDescription}</pre>
+                                </div>
+                            )}
+                        </div>
+                        <div className="fields-section">
+                            <h4>Form Fields:</h4>
+                            {selectedItem?.fieldTemplates?.map((field, index) => (
+                                <div key={index} className="field-preview">
+                                    <h5>Field {index + 1}: {field.name}</h5>
+                                    <div className="field-details">
+                                        <p><strong>Type:</strong> {field.type}</p>
+                                        <p><strong>Position:</strong> {field.position}</p>
+                                        <p><strong>Response:</strong> {field.response}</p>
+                                        <p><strong>Section:</strong> {field.section}</p>
+                                        {field.hasDetails && (
+                                            <p><strong>Details:</strong> {field.details}</p>
+                                        )}
+                                        {(field.type === 'select' || field.type === 'checkbox') && field.options && (
+                                            <div>
+                                                <strong>Options:</strong>
+                                                <ul>
+                                                    {field.options.map((option, optIndex) => (
+                                                        <li key={optIndex}>{option}</li>
                                                     ))}
-                                                </Form.Select>
-                                            </Form.Group>
-
-                                            {/* Options sections - Full width when visible */}
-                                            {(field.type === 'select' || field.type === 'scale' || field.type === 'checkbox') && (
-                                                <div className="field-full-width">
-                                                    <Form.Group className="mb-2">
-                                                        <Form.Label>
-                                                            {field.type === 'select' ? 'Options' : 
-                                                             field.type === 'scale' ? 'Scale Options' :
-                                                             'Checkbox Options'}
-                                                        </Form.Label>
-                                                        <div className="options-list">
-                                                            {field.type === 'select' && (
-                                                                field.options?.map((option, optionIndex) => (
-                                                                    <div key={optionIndex} className="option-item">
-                                                                        <Form.Control
-                                                                            type="text"
-                                                                            value={option}
-                                                                            onChange={(e) => {
-                                                                                const newFields = [...selectedItem.fieldTemplates];
-                                                                                newFields[index].options[optionIndex] = e.target.value;
-                                                                                setSelectedItem(prev => ({
-                                                                                    ...prev,
-                                                                                    fieldTemplates: newFields
-                                                                                }));
-                                                                            }}
-                                                                            placeholder={`Option ${optionIndex + 1}`}
-                                                                        />
-                                                                        <Button 
-                                                                            variant="danger"
-                                                                            size="sm"
-                                                                            onClick={() => {
-                                                                                const newFields = [...selectedItem.fieldTemplates];
-                                                                                newFields[index].options.splice(optionIndex, 1);
-                                                                                setSelectedItem(prev => ({
-                                                                                    ...prev,
-                                                                                    fieldTemplates: newFields
-                                                                                }));
-                                                                            }}
-                                                                        >
-                                                                            Remove
-                                                                        </Button>
-                                                                    </div>
-                                                                ))
-                                                            )}
-                                                            {field.type === 'scale' && (
-                                                                field.scaleOptions?.map((option, optionIndex) => (
-                                                                    <div key={optionIndex} className="option-item">
-                                                                        <Form.Control
-                                                                            type="text"
-                                                                            value={option}
-                                                                            onChange={(e) => {
-                                                                                const newFields = [...selectedItem.fieldTemplates];
-                                                                                newFields[index].scaleOptions[optionIndex] = e.target.value;
-                                                                                setSelectedItem(prev => ({
-                                                                                    ...prev,
-                                                                                    fieldTemplates: newFields
-                                                                                }));
-                                                                            }}
-                                                                            placeholder={`Scale Option ${optionIndex + 1}`}
-                                                                        />   
-                                                                    </div>
-                                                                ))
-                                                            )}
-                                                            {field.type === 'checkbox' && (
-                                                                field.options?.map((option, optionIndex) => (
-                                                                    <div key={optionIndex} className="option-item">
-                                                                        <Form.Control
-                                                                            type="text"
-                                                                            value={option}
-                                                                            onChange={(e) => {
-                                                                                const newFields = [...selectedItem.fieldTemplates];
-                                                                                newFields[index].options[optionIndex] = e.target.value;
-                                                                                setSelectedItem(prev => ({
-                                                                                    ...prev,
-                                                                                    fieldTemplates: newFields
-                                                                                }));
-                                                                            }}
-                                                                            placeholder={`Checkbox Option ${optionIndex + 1}`}
-                                                                        />
-                                                                        <Button 
-                                                                            variant="danger"
-                                                                            size="sm"
-                                                                            onClick={() => {
-                                                                                const newFields = [...selectedItem.fieldTemplates];
-                                                                                newFields[index].options.splice(optionIndex, 1);
-                                                                                setSelectedItem(prev => ({
-                                                                                    ...prev,
-                                                                                    fieldTemplates: newFields
-                                                                                }));
-                                                                            }}
-                                                                        >
-                                                                            Remove
-                                                                        </Button>
-                                                                    </div>
-                                                                ))
-                                                            )}
-                                                            <Button 
-                                                                variant="secondary"
-                                                                size="sm"
-                                                                onClick={() => {
-                                                                    const newFields = [...selectedItem.fieldTemplates];
-                                                                    if (field.type === 'select' || field.type === 'checkbox') {
-                                                                        newFields[index].options = [...(newFields[index].options || []), ''];
-                                                                    } else if (field.type === 'scale') {
-                                                                        newFields[index].scaleOptions = [...(newFields[index].scaleOptions || []), ''];
-                                                                    }
-                                                                    setSelectedItem(prev => ({
-                                                                        ...prev,
-                                                                        fieldTemplates: newFields
-                                                                    }));
-                                                                }}
-                                                            >
-                                                                + Add {field.type === 'select' ? 'Option' : 
-                                                                      field.type === 'scale' ? 'Scale Option' :
-                                                                      'Checkbox Option'}
-                                                            </Button>
-                                                        </div>
-                                                    </Form.Group>
-                                                </div>
-                                            )}
-                                        </div>
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {field.type === 'scale' && field.scaleOptions && (
+                                            <div>
+                                                <strong>Scale Options:</strong>
+                                                <ul>
+                                                    {field.scaleOptions.map((option, optIndex) => (
+                                                        <li key={optIndex}>{option}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
                                     </div>
-                                ))}
-                                <Button 
-                                    variant="secondary" 
-                                    className="add-field-btn"
-                                    onClick={() => {
-                                        setSelectedItem(prev => ({
-                                            ...prev,
-                                            fieldTemplates: [
-                                                ...(prev?.fieldTemplates || []),
-                                                { 
-                                                    name: '', 
-                                                    type: 'text',
-                                                    position: 'left',  // Set default position to 'left'
-                                                    response: '', 
-                                                    section: '',
-                                                    hasDetails: false,
-                                                    details: '',
-                                                    scaleOptions: [],
-                                                    options: []
-                                                }
-                                            ]
-                                        }));
-                                    }}
-                                >
-                                    + Add New Field
-                                </Button>
-                            </div>
-                        </Form.Group>
-                    </Form>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button 
                         variant="secondary" 
                         onClick={() => setShowModal({ type: '', action: '', show: false })}
                     >
-                        Cancel
+                        Close
                     </Button>
                     <Button 
                         variant="primary"
-                        onClick={async () => {
-                            if (!selectedItem?.formName) {
-                                alert('Form name is required');
-                                return;
-                            }
-                            if (!selectedItem?.fieldTemplates?.length) {
-                                alert('At least one field is required');
-                                return;
-                            }
-                            if (!selectedItem?.score) {
-                                alert('Score type is required');
-                                return;
-                            }
-                            if (selectedItem.score === 'OTHER' && !selectedItem?.scaleDescription?.trim()) {
-                                alert('Scale Description is required for custom score type');
-                                return;
-                            }
-
-                            // Filter out empty/invalid fields
-                            const validFields = selectedItem.fieldTemplates.filter(field => 
-                                field.name && field.type
-                            );
-
-                            const formData = {
-                                formName: selectedItem.formName,
-                                score: selectedItem.score,
-                                // Set scaleDescription based on score type
-                                scaleDescription: selectedItem.score === 'SCORE' ? scaleDescription : selectedItem.scaleDescription,
-                                fieldTemplates: validFields.map(field => ({
-                                    name: field.name,
-                                    type: field.type || 'text',
-                                    position: field.position,
-                                    response: field.response,
-                                    section: field.section,
-                                    hasDetails: field.hasDetails || false,
-                                    details: field.details || '',
-                                    options: (field.type === 'select' || field.type === 'checkbox') ? (field.options || []) : [],
-                                    scaleOptions: field.type === 'scale' ? (field.scaleOptions || []) : [],
-                                    _id: field._id
-                                }))
-                            };
-
-                            try {
-                                if (showModal.action === 'edit') {
-                                    if (window.confirm('Are you sure you want to update this form?')) {
-                                        await updateFormMutation.mutateAsync({ 
-                                            formId: selectedItem._id, 
-                                            formData 
-                                        });
-                                    }
-                                } else {
-                                    await addFormMutation.mutateAsync(formData);
-                                }
-                            } catch (error) {
-                                console.error('Failed to save form:', error);
-                            }
+                        onClick={() => {
+                            window.location.href = `/edit-form/${selectedItem?._id}`;
                         }}
-                        disabled={addFormMutation.isPending || updateFormMutation.isPending}
                     >
-                        {(addFormMutation.isPending || updateFormMutation.isPending) 
-                            ? 'Saving...' 
-                            : showModal.action === 'edit' ? 'Save Changes' : 'Add Form'
-                        }
+                        Edit Form
                     </Button>
                 </Modal.Footer>
             </Modal>
