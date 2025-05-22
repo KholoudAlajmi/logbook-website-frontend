@@ -86,7 +86,7 @@ const ViewForm = () => {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: "20px",
+                        gap: "15px",
                     }} 
                 >
                     {/* Toggle button for the sidebar */}
@@ -117,49 +117,122 @@ const ViewForm = () => {
                     
                     <div className="management-box" style={{ width: '90%', padding: '20px' }}>
                         {loading ? (
-                            <div className="loading-container" style={{ textAlign: 'center', padding: '20px' }}>
+                            <div style={{ 
+                                textAlign: 'center', 
+                                padding: '40px',
+                                background: 'white',
+                                borderRadius: '8px',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}>
                                 <p>Loading form data...</p>
                             </div>
                         ) : (
-                            <div className="form-details">
-                                <div className="score-section">
-                                    <h4>Score Type: {formData?.score}</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                                <div style={{ 
+                                    background: 'white',
+                                    padding: '24px',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}>
+                                    <h4 style={{ 
+                                        color: '#2c3e50',
+                                        marginBottom: '16px',
+                                        fontWeight: '600'
+                                    }}>Score Type: {formData?.score}</h4>
                                     {formData?.score && (
-                                        <div className="scale-description">
-                                            <h5>Scale Description:</h5>
-                                            <pre>{formData?.scaleDescription}</pre>
+                                        <div style={{ 
+                                            background: '#f8f9fa',
+                                            padding: '16px',
+                                            borderRadius: '6px',
+                                            border: '1px solid #e9ecef'
+                                        }}>
+                                            <h5 style={{ 
+                                                color: '#2c3e50',
+                                                marginBottom: '12px',
+                                                fontWeight: '600'
+                                            }}>Scale Description:</h5>
+                                            <pre style={{ 
+                                                whiteSpace: 'pre-wrap',
+                                                fontFamily: 'inherit',
+                                                margin: 0,
+                                                color: '#495057'
+                                            }}>{formData?.scaleDescription}</pre>
                                         </div>
                                     )}
                                 </div>
-                                <div className="fields-section">
-                                    <h4>Form Fields:</h4>
+
+                                <div style={{ 
+                                    background: 'white',
+                                    padding: '24px',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}>
+                                    <h4 style={{ 
+                                        color: '#2c3e50',
+                                        marginBottom: '20px',
+                                        fontWeight: '600'
+                                    }}>Form Fields:</h4>
                                     {formData?.fieldTemplates?.map((field, index) => (
-                                        <div key={index} className="field-preview">
-                                            <h5>Field {index + 1}: {field.name}</h5>
-                                            <div className="field-details">
-                                                <p><strong>Type:</strong> {field.type}</p>
-                                                <p><strong>Position:</strong> {field.position}</p>
-                                                <p><strong>Response:</strong> {field.response}</p>
-                                                <p><strong>Section:</strong> {field.section}</p>
+                                        <div key={index} style={{ 
+                                            background: '#f8f9fa',
+                                            padding: '20px',
+                                            borderRadius: '6px',
+                                            marginBottom: '16px',
+                                            border: '1px solid #e9ecef'
+                                        }}>
+                                            <h5 style={{ 
+                                                color: '#2c3e50',
+                                                marginBottom: '16px',
+                                                fontWeight: '600',
+                                                borderBottom: '2px solid #e9ecef',
+                                                paddingBottom: '8px'
+                                            }}>Field {index + 1}: {field.name}</h5>
+                                            <div style={{ 
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                                gap: '16px'
+                                            }}>
+                                                <p style={{ margin: 0, color: '#495057' }}>
+                                                    <strong style={{ color: '#2c3e50', fontWeight: '600' }}>Type:</strong> {field.type}
+                                                </p>
+                                                <p style={{ margin: 0, color: '#495057' }}>
+                                                    <strong style={{ color: '#2c3e50', fontWeight: '600' }}>Position:</strong> {field.position}
+                                                </p>
+                                                <p style={{ margin: 0, color: '#495057' }}>
+                                                    <strong style={{ color: '#2c3e50', fontWeight: '600' }}>Response:</strong> {field.response}
+                                                </p>
+                                                <p style={{ margin: 0, color: '#495057' }}>
+                                                    <strong style={{ color: '#2c3e50', fontWeight: '600' }}>Section:</strong> {field.section}
+                                                </p>
                                                 {field.hasDetails && (
-                                                    <p><strong>Details:</strong> {field.details}</p>
+                                                    <p style={{ margin: 0, color: '#495057' }}>
+                                                        <strong style={{ color: '#2c3e50', fontWeight: '600' }}>Details:</strong> {field.details}
+                                                    </p>
                                                 )}
                                                 {(field.type === 'select' || field.type === 'checkbox') && field.options && (
                                                     <div>
-                                                        <strong>Options:</strong>
-                                                        <ul>
+                                                        <strong style={{ color: '#2c3e50', fontWeight: '600' }}>Options:</strong>
+                                                        <ul style={{ 
+                                                            margin: '8px 0',
+                                                            paddingLeft: '20px',
+                                                            color: '#495057'
+                                                        }}>
                                                             {field.options.map((option, optIndex) => (
-                                                                <li key={optIndex}>{option}</li>
+                                                                <li key={optIndex} style={{ margin: '4px 0' }}>{option}</li>
                                                             ))}
                                                         </ul>
                                                     </div>
                                                 )}
                                                 {field.type === 'scale' && field.scaleOptions && (
                                                     <div>
-                                                        <strong>Scale Options:</strong>
-                                                        <ul>
+                                                        <strong style={{ color: '#2c3e50', fontWeight: '600' }}>Scale Options:</strong>
+                                                        <ul style={{ 
+                                                            margin: '8px 0',
+                                                            paddingLeft: '20px',
+                                                            color: '#495057'
+                                                        }}>
                                                             {field.scaleOptions.map((option, optIndex) => (
-                                                                <li key={optIndex}>{option}</li>
+                                                                <li key={optIndex} style={{ margin: '4px 0' }}>{option}</li>
                                                             ))}
                                                         </ul>
                                                     </div>
@@ -169,16 +242,24 @@ const ViewForm = () => {
                                     ))}
                                 </div>
 
-                                <div className="action-buttons" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                                <div style={{ 
+                                    display: 'flex',
+                                    gap: '12px',
+                                    marginTop: '24px',
+                                    paddingTop: '24px',
+                                    borderTop: '1px solid #e9ecef'
+                                }}>
                                     <Button 
                                         variant="secondary" 
                                         onClick={() => navigate('/form')}
+                                        style={{ padding: '8px 24px', fontWeight: '500' }}
                                     >
                                         Back to Forms
                                     </Button>
                                     <Button 
                                         variant="primary"
                                         onClick={() => navigate(`/edit-form/${formId}`)}
+                                        style={{ padding: '8px 24px', fontWeight: '500' }}
                                     >
                                         Edit Form
                                     </Button>

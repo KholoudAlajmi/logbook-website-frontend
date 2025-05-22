@@ -14,23 +14,76 @@ const actionButtonStyles = `
     gap: 10px;
   }
   
-  .edit-button, .delete-button {
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
+  .edit-button {
+    background-color: #000;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
     cursor: pointer;
     border: none;
     font-weight: 500;
+    display: flex;
+    gap: 4px;
+    height: 28px;
+    transition: background 0.2s;
+    margin-top: 8px;
   }
-  
-  .edit-button {
-    background-color: #4285f4;
-    color: white;
+  .edit-button:hover {
+    background-color: #888;
   }
-  
   .delete-button {
-    background-color: #ea4335;
-    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .delete-button:hover {
+    background: #f5f5f5;
+  }
+  .edit-icon {
+    font-size: 16px;
+    color: #fff;
+    margin-right: 0;
+    vertical-align: middle;
+    display: inline-block;
+  }
+  .delete-icon {
+    font-size: 22px;
+    color: #000;
+    margin: 0;
+  }
+  .search-bar {
+    position: relative;
+    width: 260px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 38px 10px 14px;
+    border: none;
+    border-radius: 12px;
+    background: #f3f3f3;
+    font-size: 15px;
+    color: #333;
+    outline: none;
+    box-shadow: none;
+    transition: box-shadow 0.2s;
+  }
+  .search-input:focus {
+    box-shadow: 0 0 0 2px #e0e0e0;
+  }
+  .search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #888;
+    pointer-events: none;
   }
 `;
 
@@ -229,7 +282,9 @@ const TemplateForms = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: "20px",
+                            gap: "15px",
+                            
+                           
                           }} 
                         >
                            {/* Toggle button for the sidebar */}
@@ -263,10 +318,12 @@ const TemplateForms = () => {
                     <div className="search-bar">
                         <input
                             type="text"
+                            className="search-input"
                             placeholder="Search forms..."
                             value={formSearch}
                             onChange={(e) => setFormSearch(e.target.value)}
                         />
+                        <span className="search-icon" style={{fontSize: "24px"}}>⌕</span>
                     </div>
                     <button 
                         className="add-button-small"
@@ -279,36 +336,43 @@ const TemplateForms = () => {
                 </div>
             </div>
             </div>
+            <div className="tutor-header">
+                            <div className="tutor-name">Form Name</div>
+                            <div className="action" style={{paddingLeft: "680px"}}>Action</div>
+                        </div>
             <div className="management-box">
             <div className="content">
                 {formsLoading ? (
                     <p>Loading forms...</p>
                 ) : (
-                    filterForms(forms || []).map((form) => (
-                        <div key={form._id} className="item">
-                            <div className="form-preview" onClick={() => {
-                                navigate(`/view-form/${form._id}`);
-                            }}>
-                                <span>{form.formName}</span>
+                    <div className="tutor-table">
+                        
+                        {filterForms(forms || []).map((form) => (
+                            <div key={form._id} className="tutor-row">
+                                <div className="tutor-name" onClick={() => {
+                                    navigate(`/view-form/${form._id}`);
+                                }} style={{ cursor: 'pointer' }}>
+                                    {form.formName}
+                                </div>
+                                <div className="action">
+                                    <button 
+                                        className="edit-button"
+                                        onClick={() => {
+                                            navigate(`/edit-form/${form._id}`);
+                                        }}
+                                    >
+                                        <span className="edit-icon">✎</span> Edit
+                                    </button>
+                                    <button 
+                                        className="delete-button"
+                                        onClick={() => handleDelete(form._id)}
+                                    >
+                                        <span className="delete-icon">🗑</span>
+                                    </button>
+                                </div>
                             </div>
-                            <div className="action-buttons">
-                                <button 
-                                    className="edit-button"
-                                    onClick={() => {
-                                        navigate(`/edit-form/${form._id}`);
-                                    }}
-                                >
-                                    Edit
-                                </button>
-                                <button 
-                                    className="delete-button"
-                                    onClick={() => handleDelete(form._id)}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))
+                        ))}
+                    </div>
                 )}
             </div>
 
@@ -336,7 +400,7 @@ const TemplateForms = () => {
                         </div>
                         <div className="fields-section">
                             <h4>Form Fields:</h4>
-                            {selectedItem?.fieldTemplates?.map((field, index) => (
+                                {selectedItem?.fieldTemplates?.map((field, index) => (
                                 <div key={index} className="field-preview">
                                     <h5>Field {index + 1}: {field.name}</h5>
                                     <div className="field-details">
@@ -344,7 +408,7 @@ const TemplateForms = () => {
                                         <p><strong>Position:</strong> {field.position}</p>
                                         <p><strong>Response:</strong> {field.response}</p>
                                         <p><strong>Section:</strong> {field.section}</p>
-                                        {field.hasDetails && (
+                                            {field.hasDetails && (
                                             <p><strong>Details:</strong> {field.details}</p>
                                         )}
                                         {(field.type === 'select' || field.type === 'checkbox') && field.options && (
@@ -355,8 +419,8 @@ const TemplateForms = () => {
                                                         <li key={optIndex}>{option}</li>
                                                     ))}
                                                 </ul>
-                                            </div>
-                                        )}
+                                                </div>
+                                            )}
                                         {field.type === 'scale' && field.scaleOptions && (
                                             <div>
                                                 <strong>Scale Options:</strong>
@@ -365,13 +429,13 @@ const TemplateForms = () => {
                                                         <li key={optIndex}>{option}</li>
                                                     ))}
                                                 </ul>
-                                            </div>
-                                        )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
-                    </div>
+                            </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button 
