@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from './components/Home';
 import Login from './components/Login';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Tutor from './components/Tutor';
@@ -20,10 +19,6 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: <Login />,
-  },
-  {
-  path: "/home",
-  element: <Home/>
   },
   {
     path: "/tutor",

@@ -61,9 +61,6 @@ const ViewForm = () => {
             
             {/* Sidebar with active highlighting */}
             <div className="sidebar" style={{ left: isVisible ? 0 : "-150px", transition: "left 0.3s ease" }}>
-                <div className={`card ${location.pathname === '/home' ? 'active' : ''}`} onClick={() => navigate("/home")}>
-                    <h2>Home</h2>
-                </div>
                 <div className={`card ${location.pathname === '/tutor' ? 'active' : ''}`} onClick={() => navigate("/tutor")}>
                     <h2>Tutor</h2>
                 </div>

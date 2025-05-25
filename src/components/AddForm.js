@@ -105,9 +105,6 @@ const AddFormPage = () => {
             
             {/* Sidebar with active highlighting */}
             <div className="sidebar" style={{ left: isVisible ? 0 : "-150px", transition: "left 0.3s ease" }}>
-                <div className={`card ${location.pathname === '/home' ? 'active' : ''}`} onClick={() => navigate("/home")}>
-                    <h2>Home</h2>
-                </div>
                 <div className={`card ${location.pathname === '/tutor' ? 'active' : ''}`} onClick={() => navigate("/tutor")}>
                     <h2>Tutor</h2>
                 </div>
@@ -122,7 +119,7 @@ const AddFormPage = () => {
                 </div>
             </div>
         
-            <div className="main-container" style={{ marginLeft: isVisible ? "160px" : "10px", width: isVisible ? "calc(100% - 160px)" : "calc(100% - 10px)", transition: "all 0.3s ease" }}>
+            <div className="main-container" style={{ marginLeft: isVisible ? "160px" : "10px", width: isVisible ? "calc(100% - 160px)" : "calc(100% - 10px)", transition: "all 0.3s ease", marginTop:'80px'}}>
                 <div
                     className="container"
                     style={{
@@ -149,13 +146,13 @@ const AddFormPage = () => {
                             fontSize: "12px",
                             cursor: "pointer",
                             zIndex: 1500,
-                            transition: "left 0.3s ease"
+                            transition: "left 0.3s ease",
                         }}
                     >
                         {isVisible ? "<" : ">"}
                     </button>
 
-                    <div className="form-container">
+                    <div className="management-box" style={{marginTop:'20px', height:'100%'}}>
                         <h2 className="page-title">Add New Form</h2>
                         <Form className="add-form">
                             <Form.Group className="mb-3">

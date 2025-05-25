@@ -1552,19 +1552,32 @@ div.field-full-width{
 /* Add Form Page Styles */
 .form-container {
   width: 100%;
-  max-width: 1000px;
-  background: white;
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 850px;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+  margin: 15px auto;
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
-  color: #000;
-  margin-bottom: 25px;
+  color: #2c2c2c;
+  margin-bottom: 30px;
   text-align: center;
+  position: relative;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: #000;
 }
 
 .add-form {
@@ -1573,143 +1586,60 @@ div.field-full-width{
 
 .form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid #f0f0f0;
 }
 
 .submit-btn, .cancel-btn {
-  padding: 8px 25px;
-  font-size: 16px;
-  border-radius: 5px;
+  padding: 10px 24px;
+  font-size: 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-width: 110px;
 }
 
 .submit-btn {
   background-color: #000;
+  color: white;
   border: none;
-}
-
-.submit-btn:hover {
-  background-color: #333;
-}
-
-.cancel-btn {
-  background-color: white;
-  color: #333;
-  border: 1px solid #ddd;
-}
-
-.cancel-btn:hover {
-  background-color: #f5f5f5;
-}
-
-/* Form Details Page Styles */
-.header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid #eee;
-  border-radius: 8px 8px 0 0;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-}
-
-.edit-btn, .back-btn {
-  padding: 6px 15px;
-  font-size: 14px;
-  border-radius: 4px;
-}
-
-.form-details-container {
-  padding: 20px;
-}
-
-.form-details-header {
-  margin-bottom: 25px;
-}
-
-.form-details-header h3 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.score-type {
-  color: #666;
-  font-size: 16px;
-}
-
-.form-details-section {
-  margin-bottom: 30px;
-}
-
-.form-details-section h4 {
-  font-size: 18px;
-  margin-bottom: 15px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
-}
-
-.scale-description {
-  white-space: pre-line;
-  background-color: #f9f9f9;
-  padding: 15px;
-  border-radius: 5px;
-  border-left: 3px solid #ddd;
-}
-
-.fields-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.field-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: relative;
   overflow: hidden;
 }
 
-.field-card-header {
-  display: flex;
-  justify-content: space-between;
-  background-color: #f0f0f0;
-  padding: 10px 15px;
-  border-bottom: 1px solid #e0e0e0;
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
 }
 
-.field-number {
-  font-weight: bold;
+.submit-btn:hover::after {
+  transform: translateX(0);
 }
 
-.field-type {
-  text-transform: capitalize;
-  color: #555;
-  font-size: 14px;
+.submit-btn:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
 }
 
-.field-card-content {
-  padding: 15px;
+.cancel-btn {
+  background-color: #f5f5f5;
+  color: #333;
+  border: none;
 }
 
-.field-card-content p {
-  margin-bottom: 8px;
-}
-
-.field-options {
-  margin-top: 12px;
-}
-
-.field-options ul {
-  margin-top: 5px;
-  padding-left: 20px;
+.cancel-btn:hover {
+  background-color: #e8e8e8;
 }
 
 .field-options li {

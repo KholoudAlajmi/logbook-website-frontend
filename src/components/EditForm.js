@@ -6,16 +6,23 @@ import "../App.css";
 import logo from "../assets/logo.png";
 
 const EditForm = () => {
-    // Get formId from URL
+    // Get formId from URL and validate it
     const formId = window.location.pathname.split('/').pop();
     const navigate = useNavigate();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const [formData, setFormData] = useState(null);
+    const [originalFormData, setOriginalFormData] = useState(null); // Store original form data
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     const scaleDescription = "The purpose of this scale is to evaluate\nthe trainee's ability to perform this\nprocedure safely and independently.\nWith that in mind please use the\nscale below to evaluate each item,\nirrespective of the resident's level of\ntraining in regards to this case.\nScale:\n1 - \"I had to do\" - Requires complete hands on guidance, did not do, or was not given the opportunity to do\n2 - \"I had to talk them through\" - Able to perform tasks but requires constant direction\n3 - \"I had to prompt them from time to time\" - Demonstrates some independence, but requires intermittent direction\n4 - \"I needed to be in the room just in case\" - Independence but unaware of risks and still requires supervision for safe practice\n5 - \"I did not need to be there\" - Complete independence, understands risks and performs safely, practice ready"  
+
+    // Function to validate MongoDB ObjectId
+    //when i cancel changes, i want to restore the original form data
+    const isValidObjectId = (id) => {
+        return /^[0-9a-fA-F]{24}$/.test(id);
+    };
 
     // Fetch form data when component mounts
     useEffect(() => {
@@ -23,10 +30,19 @@ const EditForm = () => {
         
         const fetchFormData = async () => {
             try {
+                // Validate formId before making the API call
+                //when i cancel changes, i want to restore the original form data
+                if (!isValidObjectId(formId)) {
+                    console.error('Invalid form ID format');
+                    navigate('/form');
+                    return;
+                }
+
                 setLoading(true);
                 const response = await api.get(`/formTemplates/${formId}`);
                 console.log('Form data loaded:', response.data);
                 setFormData(response.data);
+                setOriginalFormData(response.data); // Store original data
                 setLoading(false);
             } catch (error) {
                 console.error('Error loading form:', error);
@@ -131,6 +147,14 @@ const EditForm = () => {
         }
     };
 
+    // Add cancel handler
+    const handleCancel = () => {
+        if (window.confirm('Are you sure you want to cancel? All changes will be discarded.')) {
+            setFormData(originalFormData); // Restore original data
+            navigate('/form');
+        }
+    };
+
     // Custom styles
     const customStyles = `
         .action-buttons {
@@ -149,7 +173,7 @@ const EditForm = () => {
         }
         
         .save-button {
-            background-color: #4285f4;
+            background-color:rgb(0, 0, 0);
             color: white;
         }
         
@@ -219,9 +243,6 @@ const EditForm = () => {
             
             {/* Sidebar with active highlighting */}
             <div className="sidebar" style={{ left: isVisible ? 0 : "-150px", transition: "left 0.3s ease" }}>
-                <div className={`card ${location.pathname === '/home' ? 'active' : ''}`} onClick={() => navigate("/home")}>
-                    <h2>Home</h2>
-                </div>
                 <div className={`card ${location.pathname === '/tutor' ? 'active' : ''}`} onClick={() => navigate("/tutor")}>
                     <h2>Tutor</h2>
                 </div>
@@ -272,11 +293,12 @@ const EditForm = () => {
                     {/* Apply custom styles */}
                     <style>{customStyles}</style>
 
-                    <div className="header-box">
+                    <div className="header-box" style={{ overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <h2>Edit Form</h2>
+                        <h2>{formData?.formName}</h2>
                     </div>
                     
-                    <div className="management-box" style={{ width: '90%', padding: '20px' }}>
+                    <div className="management-box" style={{ width: '98%', padding: '20px' }}>
                         {loading ? (
                             <div className="loading-container" style={{ textAlign: 'center', padding: '20px' }}>
                                 <p>Loading form data...</p>
@@ -685,7 +707,8 @@ const EditForm = () => {
                                     </button>
                                     <button 
                                         className="cancel-button" 
-                                        onClick={() => navigate('/form')}
+                                        onClick={handleCancel}
+                                        disabled={saving}
                                     >
                                         Cancel
                                     </button>
