@@ -92,10 +92,9 @@ const TemplateForms = () => {
     const [showModal, setShowModal] = useState({ type: '', action: '', show: false });
     const [selectedItem, setSelectedItem] = useState(null);
     const [formSearch, setFormSearch] = useState('');
-
-     const navigate = useNavigate();
-      const location = useLocation();
-      const [isVisible, setIsVisible] = useState(true);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [isVisible, setIsVisible] = useState(true);
     
       const handleLogout = () => {
         navigate("/");
@@ -125,7 +124,7 @@ const TemplateForms = () => {
     // Filter forms
     const filterForms = (forms) => {
         if (!formSearch) return forms;
-        return forms?.filter(form => 
+        return forms?.filter(form =>  
             form.formName.toLowerCase().includes(formSearch.toLowerCase())
         );
     };
@@ -279,7 +278,7 @@ const TemplateForms = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: "15px",
+                            gap: "20px",
                             
                            
                           }} 
@@ -315,7 +314,6 @@ const TemplateForms = () => {
                     <div className="search-bar">
                         <input
                             type="text"
-                            className="search-input"
                             placeholder="Search forms..."
                             value={formSearch}
                             onChange={(e) => setFormSearch(e.target.value)}
@@ -333,16 +331,18 @@ const TemplateForms = () => {
                 </div>
             </div>
             </div>
+            <div className="tutor-table">
             <div className="tutor-header">
                             <div className="tutor-name">Form Name</div>
                             <div className="action" style={{paddingLeft: "680px"}}>Action</div>
                         </div>
+            </div>
             <div className="management-box">
             <div className="content">
                 {formsLoading ? (
                     <p>Loading forms...</p>
                 ) : (
-                    <div className="tutor-table">
+                    <div>
                         
                         {filterForms(forms || []).map((form) => (
                             <div key={form._id} className="tutor-row">

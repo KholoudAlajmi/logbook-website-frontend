@@ -204,6 +204,10 @@ const Announcement = () => {
                 </div>
             </div>
             </div>
+             <div className="tutor-header">
+                            <div className="tutor-name">Announcement Title</div>
+                            <div className="action" style={{paddingLeft: "680px"}}>Action</div>
+                        </div>
             <div className="management-box">
             <div className="content">
                 {announcementsLoading ? (

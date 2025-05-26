@@ -6,7 +6,62 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../App.css";
 import logo from "../assets/logo.png";
 
-//user.role.indexOf('tutor') > -1
+
+// Add custom styles for action buttons
+const actionButtonStyles = `
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .edit-button {
+    background-color: #000;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+    display: flex;
+    gap: 4px;
+    height: 28px;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+  .edit-button:hover {
+    background-color: #888;
+  }
+  .delete-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .delete-button:hover {
+    background: #f5f5f5;
+  }
+  .edit-icon {
+    font-size: 16px;
+    color: #fff;
+    margin-right: 0;
+    vertical-align: middle;
+    display: inline-block;
+  }
+  .delete-icon {
+    font-size: 22px;
+    color: #000;
+    margin: 0;
+  }
+`;
+
+
+
+
 const Tutor = () => {
     const queryClient = useQueryClient();
     const [showModal, setShowModal] = useState({ type: '', action: '', show: false });
@@ -215,18 +270,23 @@ console.log("tutors", tutors)
             </div>
             </div>
 
-        <div className="management-box">
-            <div className="content">
-                {tutorsLoading ? (
-                    <p>Loading tutors...</p>
-                ) : (
-                    <div className="tutor-table">
+            <div className="tutor-table">
                         <div className="tutor-header">
                             <div className="tutor-name">Tutor Name</div>
                             <div className="tutor-email">Tutor Email</div>
                             <div className="phone-number">Phone Number</div>
                             <div className="action">Action</div>
                         </div>
+                      </div>
+                                  
+            
+
+        <div className="management-box">
+            <div className="content">
+                {tutorsLoading ? (
+                    <p>Loading tutors...</p>
+                ) : (
+                    <div>
                         {filterTutors(tutors || []).map((tutor) => (
                             <div key={tutor._id} className="tutor-row">
                                 <div className="tutor-name">{tutor.username }</div>
@@ -368,7 +428,7 @@ console.log("tutors", tutors)
                     )}
                 </Modal.Footer>
             </Modal>
-
+            <style>{actionButtonStyles}</style>
             </div>
         </div>
         </div> 
